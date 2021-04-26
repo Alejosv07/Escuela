@@ -1,0 +1,76 @@
+:root {
+    --light: #778DA5;
+}
+
+body {
+    background-color: #212121;
+}
+
+.sidebar-container {
+    min-height: 100%;
+    border-radius: 15px 0px 0px 15px;
+    background-color: #000000;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.sidebar-container .logo {
+    padding: .875rem 1.25rem;
+}
+
+.sidebar-container .menu {
+    width: 18rem;
+}
+
+.contenido {
+    border-radius: 0px 15px 15px 0px;
+}
+
+.bg-dark {
+    background-color: var(--light) !important;
+}
+
+.headerContenido {
+    background-color: #778DA5;
+    color: white;
+}
+
+.contenidoB {
+    overflow-y: auto;
+    overflow-x :auto;
+    height: 100vh;
+    padding-bottom: 5.rem;
+    background-color: white;
+}
+.shadow {
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px #000;
+}
+
+.my-custom-scrollbar {
+    position: relative;
+    height: 400px;
+    overflow: auto;
+}
+
+.table-wrapper-scroll-y {
+    display: block;
+}
+
+.frm-container {
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px #000;
+}
+
+@media (max-width: 768px) {
+    .sidebar-container {
+        display: none;
+    }
+    .headerActualizacion {
+        display: none;
+    }
+}
