@@ -30,18 +30,14 @@ namespace escuela.Clases
             con.Close();
         }
 
-        public SqlCommand cargarTabla(Evaluaciones t, int trimestre)
+        public SqlCommand cargarTabla(Evaluaciones t, Estudiante e, int trimestre)
         {
             SqlConnection con = this.conexion();
             SqlCommand cmd = con.CreateCommand();
             cmd.CommandType = CommandType.Text;
             if (trimestre == 4)
             {
-                cmd.CommandText = "select Materia.materia as Materia,evaluacion1 as Evaluacion1," +
-                    "evaluacion2 as Evaluacion2,evaluacion3 as Evaluacion3,CONVERT(DECIMAL(10,2),((evaluacion1+evaluacion2+evaluacion3)/3)) as Promedio from Evaluaciones inner join Materia on Materia.idMateria " +
-                    "= Evaluaciones.idMateria where Evaluaciones.idAlumno = @idAlumno and Evaluaciones.idTrimestre = @idTrimestre;";
-                cmd.Parameters.AddWithValue("@idAlumno", t.IdAlumno);
-                cmd.Parameters.AddWithValue("@idTrimestre", trimestre);
+                cmd.CommandText = "EXEC dbo.NotasFinales @usuario = '"+e.Usuario+"'";
             }
             else {
                 cmd.CommandText = "select Materia.materia as Materia,evaluacion1 as 'Evaluacion1(15%)'," +

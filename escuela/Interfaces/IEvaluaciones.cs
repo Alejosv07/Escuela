@@ -14,6 +14,6 @@ namespace escuela.Interfaces
         List<Evaluaciones> ListaEvaluacionesId(Evaluaciones t,int trimestre);
         List<Evaluaciones> ListaEvaluacionesIdFinales(Evaluaciones t);
 
-        SqlCommand cargarTabla(Evaluaciones t, int trimestre);
+        SqlCommand cargarTabla(Evaluaciones t,Estudiante e, int trimestre);
     }
 }

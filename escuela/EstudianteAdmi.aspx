@@ -120,10 +120,6 @@
                                         </div>
                                         <div class="row my-2">
                                             <div class="col">
-                                                <asp:Label ID="lb1" runat="server" Text="Carnet:"></asp:Label>
-                                                <asp:TextBox ID="txtCarnet" runat="server" CssClass="form-control"></asp:TextBox>
-                                            </div>
-                                            <div class="col">
                                                 <asp:Label ID="lb2" runat="server" Text="Grados:"></asp:Label>
                                                 <asp:DropDownList ID="DropDownList2" runat="server" DataSourceID="SqlDataSource1" DataTextField="Grado" DataValueField="idGrado" CssClass="form-control"></asp:DropDownList>
                                                 <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="select (Grado.nombre+' '+Grado.seccion) as Grado,Grado.idGrado from Grado inner join Profesores on Profesores.idGrado = Grado.idGrado where Profesores.nivel &lt;&gt; 1 ;"></asp:SqlDataSource>
@@ -144,12 +140,6 @@
                                                 <asp:Label ID="lb5" runat="server" Text="Email:"></asp:Label>
                                                 <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control"></asp:TextBox>
                                             </div>
-                                            <div class="col my-2">
-                                                <asp:Label ID="lb6" runat="server" Text="Usuario:"></asp:Label>
-                                                <asp:TextBox ID="txtUsuario" runat="server" CssClass="form-control"></asp:TextBox>
-                                            </div>
-                                        </div>
-                                        <div class="row my-2">
                                             <div class="col">
                                                 <asp:Label ID="lb7" runat="server" Text="Contraseña"></asp:Label>
                                                 <asp:TextBox ID="txtContra" runat="server" CssClass="form-control"></asp:TextBox>
@@ -172,7 +162,8 @@
                                                         <asp:BoundField DataField="nombre" HeaderText="nombre" SortExpression="nombre" />
                                                         <asp:BoundField DataField="apellido" HeaderText="apellido" SortExpression="apellido" />
                                                         <asp:BoundField DataField="carnet" HeaderText="carnet" SortExpression="carnet" />
-                                                        <asp:TemplateField HeaderText="idGrado" SortExpression="idGrado">
+                                                        <asp:BoundField DataField="idGrado" HeaderText="idGrado" SortExpression="idGrado" ReadOnly="true" />
+                                                        <%--<asp:TemplateField HeaderText="idGrado" SortExpression="idGrado" ReadOnly="True">
                                                             <EditItemTemplate>
                                                                 <asp:DropDownList ID="DropDownList1" runat="server" DataSourceID="SqlDataSource4" DataTextField="Grado" DataValueField="idGrado" SelectedValue='<%# Bind("idGrado") %>'>
                                                                 </asp:DropDownList>
@@ -181,7 +172,7 @@
                                                             <ItemTemplate>
                                                                 <asp:Label ID="Label1" runat="server" Text='<%# Bind("idGrado") %>'></asp:Label>
                                                             </ItemTemplate>
-                                                        </asp:TemplateField>
+                                                        </asp:TemplateField>--%>
                                                         <asp:BoundField DataField="responsableNombre" HeaderText="responsableNombre" SortExpression="responsableNombre" />
                                                         <asp:BoundField DataField="responsableApellido" HeaderText="responsableApellido" SortExpression="responsableApellido" />
                                                         <asp:BoundField DataField="email" HeaderText="email" SortExpression="email" />

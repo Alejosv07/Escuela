@@ -38,24 +38,24 @@ namespace escuela
         {
             EstudianteImp estudianteImp = new EstudianteImp();
             Estudiante estudiante = new Estudiante();
-            if (string.IsNullOrEmpty(this.txtApellido.Text.Trim()) || string.IsNullOrEmpty(this.txtCarnet.Text.Trim())
-                || string.IsNullOrEmpty(this.txtContra.Text.Trim()) || string.IsNullOrEmpty(this.txtEmail.Text.Trim())
+            if (string.IsNullOrEmpty(this.txtApellido.Text.Trim()) || string.IsNullOrEmpty(this.txtContra.Text.Trim()) || string.IsNullOrEmpty(this.txtEmail.Text.Trim())
                 || string.IsNullOrEmpty(this.txtNombre.Text.Trim()) || string.IsNullOrEmpty(this.txtApellido.Text.Trim())
                 || string.IsNullOrEmpty(this.txtresponsableApellido.Text.Trim()) || string.IsNullOrEmpty(this.txtresponsableNombre.Text.Trim())
-                || string.IsNullOrEmpty(this.txtUsuario.Text.Trim()) || string.IsNullOrEmpty(this.DropDownList2.SelectedValue.ToString()))
+                || !this.txtEmail.Text.Contains("@") || string.IsNullOrEmpty(this.DropDownList2.SelectedValue.ToString()))
             {
-                Response.Write("<script>alert('" + "Campos nulos" + "');</script>");
+                Response.Write("<script>alert('" + "Campos nulos o invalidos" + "');</script>");
                 return;
             }
+
             estudiante.Apellido = this.txtApellido.Text.Trim();
-            estudiante.Carnet = this.txtCarnet.Text.Trim();
+            estudiante.Carnet = DateTime.Today.Year+this.txtApellido.Text.Substring(0,1)+this.txtNombre.Text.Substring(0,1)+Convert.ToString(new Random().Next(10,100));
             estudiante.Contra = this.txtContra.Text.Trim();
             estudiante.Email = this.txtEmail.Text.Trim();
             estudiante.Grado = Convert.ToInt32(this.DropDownList2.SelectedValue.ToString());
             estudiante.Nombre = this.txtNombre.Text.Trim();
             estudiante.ResponsableApellido = this.txtresponsableApellido.Text.Trim();
             estudiante.ResponsableNombre = this.txtresponsableNombre.Text.Trim();
-            estudiante.Usuario = this.txtUsuario.Text.Trim();
+            estudiante.Usuario = this.txtEmail.Text.Trim().Substring(0, this.txtEmail.Text.Trim().IndexOf('@')).Replace("@", "");
             estudianteImp.AgregarProce(estudiante);
             Response.Redirect("EstudianteAdmi.aspx");
         }

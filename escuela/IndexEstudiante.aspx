@@ -88,7 +88,7 @@
                                         <div class="dropdown-divider"></div>
                                         <asp:Button ID="btnPeriodo3" runat="server" Text="Periodo 3" CssClass="border-0 bg-white dropdown-item" OnClick="btnP3_Click"/>                                   
                                         <div class="dropdown-divider"></div>
-                                        <%--<asp:Button ID="btnFperiodo" runat="server" Text="Promedios Finales" CssClass="border-0 bg-white dropdown-item" OnClick="btnP3_Click"/>--%>                                   
+                                        <asp:Button ID="btnFperiodo" runat="server" Text="Promedios Finales" CssClass="border-0 bg-white dropdown-item" OnClick="btnPF_Click"/>                                   
                                     </div>
                                 </div>
                                 

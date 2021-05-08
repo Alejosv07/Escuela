@@ -37,9 +37,9 @@ namespace escuela
             if (string.IsNullOrEmpty(this.txtApellido.Text.Trim()) 
                 || string.IsNullOrEmpty(this.txtContra.Text.Trim()) || string.IsNullOrEmpty(this.txtEmail.Text.Trim())
                 || string.IsNullOrEmpty(this.txtNombre.Text.Trim()) || string.IsNullOrEmpty(this.txtApellido.Text.Trim())
-                || string.IsNullOrEmpty(this.txtUsuario.Text.Trim()))
+                || !this.txtEmail.Text.Contains("@"))
             {
-                Response.Write("<script>alert('" + "Campos nulos" + "');</script>");
+                Response.Write("<script>alert('" + "Campos nulos o invalidos" + "');</script>");
                 return;
             }
             try
@@ -50,7 +50,7 @@ namespace escuela
                 profesores.IdGrado = Convert.ToInt32(this.DropDownList1.SelectedValue.ToString());
                 profesores.Email = this.txtEmail.Text.Trim();
                 profesores.Nombre = this.txtNombre.Text.Trim();
-                profesores.Usuario = this.txtUsuario.Text.Trim();
+                profesores.Usuario = this.txtEmail.Text.Trim().Substring(0,this.txtEmail.Text.Trim().IndexOf('@')).Replace("@","");
                 profesoresImpt.Agregar(profesores);
                 Response.Redirect("IndexAdmi.aspx");
             }
@@ -136,7 +136,7 @@ namespace escuela
                 document.Add(table);
                 document.Close();
                 Response.ContentType = "application/pdf";
-                Response.AddHeader("content-disposition", "attachment;filename=ProfesoresRegistrados" + ".pdf");
+                Response.AddHeader("content-disposition", "attachment;filename=ProfesoresRegistrados"+DateTime.Now.ToShortDateString() + ".pdf");
                 HttpContext.Current.Response.Write(document);
                 Response.Flush();
                 Response.End();

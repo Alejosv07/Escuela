@@ -37,13 +37,18 @@ namespace escuela
                 Session["Periodo"] = 1;
                 this.cargarTablaPrincipal(1);
             }
+            System.Diagnostics.Debug.WriteLine("ID: estudiante");
+            System.Diagnostics.Debug.WriteLine(estudiante.IdAlumno);
+            System.Diagnostics.Debug.WriteLine("ID: trimeste");
+            System.Diagnostics.Debug.WriteLine((int)Session["Periodo"]);
+
             this.lbActu.Text = "Ultima actualización " + DateTime.Now.ToString();
             this.navbarDropdown.InnerText = estudiante.Nombre + " " + estudiante.Apellido;
         }
 
         public void cargarTablaPrincipal(int trimestre) {
             DataTable dt = new DataTable();
-            SqlDataAdapter da = new SqlDataAdapter(this.evaluacionesImpt.cargarTabla(this.evaluaciones, trimestre));
+            SqlDataAdapter da = new SqlDataAdapter(this.evaluacionesImpt.cargarTabla(this.evaluaciones,estudiante, trimestre));
             da.Fill(dt);
             this.grid1.DataSource = dt;
             this.grid1.DataBind();
@@ -52,7 +57,18 @@ namespace escuela
         public DataTable dtAlumno() {
             DataTable dt = new DataTable();
             int trimes = (int)Session["Periodo"];
-            SqlDataAdapter da = new SqlDataAdapter(this.evaluacionesImpt.cargarTabla(this.evaluaciones, trimes));
+            SqlDataAdapter da = new SqlDataAdapter(this.evaluacionesImpt.cargarTabla(this.evaluaciones,estudiante, trimes));
+            da.Fill(dt);
+            da.Dispose();
+            return dt;
+        }
+        public DataTable dtAlumnoF() {
+            DataTable dt = new DataTable();
+            int trimes = (int)Session["Periodo"];
+            SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
+            SqlCommand cmd = con.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.Fill(dt);
             da.Dispose();
             return dt;
@@ -89,6 +105,7 @@ namespace escuela
             DataTable dt = new DataTable();
             Document document = new Document();
             PdfWriter writer = PdfWriter.GetInstance(document, HttpContext.Current.Response.OutputStream);
+            int trimes = (int)Session["Periodo"];
             dt = dtAlumno();
             if (dt.Rows.Count > 0)
             {
@@ -106,7 +123,6 @@ namespace escuela
 
                 //document.Add(new Paragraph(20, "Cuadro de notas", fontTitle));
                 document.Add(new Chunk("\n"));
-                int trimes = (int)Session["Periodo"];
 
 
                 BaseFont baseFont2 = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
@@ -115,7 +131,13 @@ namespace escuela
                 pA.Alignment = Element.ALIGN_RIGHT;
                 pA.Add(new Chunk("Estudiante: " + this.estudiante.Nombre + " " + this.estudiante.Apellido, fontAutor));
                 pA.Add(new Chunk("\nCarnet: " + this.estudiante.Carnet, fontAutor));
-                pA.Add(new Chunk("\nPeriodo: " + trimes , fontAutor));
+                if (trimes<4)
+                {
+                    pA.Add(new Chunk("\nPeriodo: " + trimes , fontAutor));
+                }
+                else{ 
+                    pA.Add(new Chunk("\nNotas finales" , fontAutor));
+                }
                 pA.Add(new Chunk("\nFecha de impresión: " + DateTime.Now.ToShortDateString(), fontAutor));
                 document.Add(pA);
 
@@ -152,13 +174,18 @@ namespace escuela
                 document.Add(table);
                 document.Close();
                 Response.ContentType = "application/pdf";
-                Response.AddHeader("content-disposition", "attachment;filename=Calificaciones" + ".pdf");
+                if (trimes < 4)
+                {
+                    Response.AddHeader("content-disposition", "attachment;filename=Calificaciones_Periodo " + trimes + " "+this.estudiante.Carnet+".pdf");
+                }
+                else { 
+                    Response.AddHeader("content-disposition", "attachment;filename=Calificaciones_Finales " + this.estudiante.Carnet + ".pdf");
+                }
                 HttpContext.Current.Response.Write(document);
                 Response.Flush();
                 Response.End();
             }
 
         }
-        
     }
 }

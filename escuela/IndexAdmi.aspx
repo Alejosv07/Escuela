@@ -106,7 +106,13 @@
                                         <div class="col">
                                             <asp:Label ID="Label3" runat="server" Text="Grado:"></asp:Label>
                                             <asp:DropDownList ID="DropDownList1" runat="server" DataSourceID="SqlDataSource1" DataTextField="Grado" DataValueField="idGrado" CssClass="form-control"></asp:DropDownList>
-                                            <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="select (nombre+' '+seccion) as Grado,idGrado from Grado"></asp:SqlDataSource>
+                                            <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT (nombre+' '+seccion) as Grado,idGrado FROM (
+SELECT idGrado, nombre, seccion FROM Grado
+except
+SELECT Grado.idGrado, Grado.nombre, Grado.seccion FROM Grado
+inner join Profesores on Grado.idGrado = Profesores.idGrado
+) as T1
+order by idGrado;"></asp:SqlDataSource>
                                         </div>
                                         <div class="col">
                                             <asp:Label ID="Label4" runat="server" Text="Email:"></asp:Label>
@@ -115,15 +121,9 @@
                                     </div>
                                     <div class="row">
                                         <div class="col">
-                                            <asp:Label ID="Label5" runat="server" Text="Usuario:"></asp:Label>
-                                            <asp:TextBox ID="txtUsuario" runat="server" CssClass="form-control"></asp:TextBox>
-                                        </div>
-                                        <div class="col">
                                             <asp:Label ID="Label6" runat="server" Text="Contraseña:"></asp:Label>
                                             <asp:TextBox ID="txtContra" runat="server" CssClass="form-control"></asp:TextBox>
                                         </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="col">
                                             <asp:Label ID="Label7" runat="server" Text="Nivel:"></asp:Label>
                                             <asp:DropDownList ID="DropDownList3" runat="server" CssClass="form-control">
@@ -180,7 +180,7 @@
                                         <SortedDescendingHeaderStyle BackColor="#4870BE" />
                                      </asp:GridView>
 
-                                     <asp:SqlDataSource ID="SqlDataSource3" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT * FROM [Profesores]" DeleteCommand="DELETE FROM [Profesores] WHERE [idProfesores] = @idProfesores" InsertCommand="INSERT INTO [Profesores] ([nombre], [apellido], [idGrado], [email], [usuario], [contra], [nivel]) VALUES (@nombre, @apellido, @idGrado, @email, @usuario, @contra, @nivel)" UpdateCommand="UPDATE [Profesores] SET [nombre] = @nombre, [apellido] = @apellido, [idGrado] = @idGrado, [email] = @email, [usuario] = @usuario, [contra] = @contra, [nivel] = @nivel WHERE [idProfesores] = @idProfesores">
+                                     <asp:SqlDataSource ID="SqlDataSource3" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="select p.idProfesores,p.nombre,p.apellido,g.nombre as Grado,p.idGrado,p.email,p.usuario,p.contra,p.nivel from Profesores p inner join Grado g on p.idGrado = g.idGrado;" DeleteCommand="DELETE FROM [Profesores] WHERE [idProfesores] = @idProfesores" InsertCommand="INSERT INTO [Profesores] ([nombre], [apellido], [idGrado], [email], [usuario], [contra], [nivel]) VALUES (@nombre, @apellido, @idGrado, @email, @usuario, @contra, @nivel)" UpdateCommand="UPDATE [Profesores] SET [nombre] = @nombre, [apellido] = @apellido, [idGrado] = @idGrado, [email] = @email, [usuario] = @usuario, [contra] = @contra, [nivel] = @nivel WHERE [idProfesores] = @idProfesores">
                                          <DeleteParameters>
                                              <asp:Parameter Name="idProfesores" Type="Int32" />
                                          </DeleteParameters>
