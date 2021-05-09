@@ -27,6 +27,7 @@ namespace escuela
             }
             this.lbActu.Text = "Ultima actualización " + DateTime.Now.ToString();
             this.navbarDropdown.InnerText = profesores.Nombre + " " + profesores.Apellido;
+            System.Diagnostics.Debug.WriteLine("Example for git");
         }
 
         protected void btnSalir_Click(object sender, EventArgs e)
