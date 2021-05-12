@@ -36,11 +36,28 @@ namespace escuela
             {
                 Session["Periodo"] = 1;
                 this.cargarTablaPrincipal(1);
+                SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
+                con.Open();
+                SqlCommand cmd = con.CreateCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT nombre from Grado where idGrado = @idGrado";
+                cmd.Parameters.AddWithValue("@idGrado", this.estudiante.Grado);
+                cmd.ExecuteNonQuery();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                {
+                    this.lbGrado.Text = "Cursando: " + dr[0].ToString();
+                }
+                dr.Close();
+                con.Close();
             }
             System.Diagnostics.Debug.WriteLine("ID: estudiante");
             System.Diagnostics.Debug.WriteLine(estudiante.IdAlumno);
             System.Diagnostics.Debug.WriteLine("ID: trimeste");
             System.Diagnostics.Debug.WriteLine((int)Session["Periodo"]);
+            System.Diagnostics.Debug.WriteLine("ID: grado");
+            System.Diagnostics.Debug.WriteLine(estudiante.Grado);
 
             this.lbActu.Text = "Ultima actualización " + DateTime.Now.ToString();
             this.navbarDropdown.InnerText = estudiante.Nombre + " " + estudiante.Apellido;
@@ -64,7 +81,6 @@ namespace escuela
         }
         public DataTable dtAlumnoF() {
             DataTable dt = new DataTable();
-            int trimes = (int)Session["Periodo"];
             SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
             SqlCommand cmd = con.CreateCommand();
             cmd.CommandType = CommandType.Text;

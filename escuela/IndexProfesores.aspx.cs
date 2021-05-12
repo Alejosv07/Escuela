@@ -103,6 +103,7 @@ namespace escuela
             this.txtTrimestreSeleccionado.Text = "3";
             this.txtTrimestreShow.Text = "Tercer Trimestre";
         }
+        
 
         //public void cargarTablaPrincipal()
         //{

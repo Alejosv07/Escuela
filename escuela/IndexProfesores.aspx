@@ -27,8 +27,9 @@
                 </div>
             </div>
             <div class="menu">
-                <a href="MiInfoProfesor.aspx" class="d-block p-3 text-muted"><i class="fas fa-user mr-2 lead"></i> Mi información</a>
-                <a href="IndexProfesores.aspx" class="d-block p-3 text-primary"><i class="fas fa-book-open lead"></i> Calificar</a>
+                <a href="MiInfoProfesor.aspx" class="d-block p-3 text-primary"><i class="fas fa-user mr-2 lead"></i> Mi información</a>
+                <a href="IndexProfesores.aspx" class="d-block p-3 text-muted"><i class="fas fa-book-open mr-2 lead"></i> Calificar</a>
+                <a href="ReportesMaestros.aspx" class="d-block p-3 text-muted"><i class="fas fa-book-open mr-2 lead"></i> Reportes</a>            
             </div>
         </div>
 
@@ -49,6 +50,7 @@
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="MiInfoProfesor.aspx"><i class="fas fa-calendar-alt lead"></i> Mi información</a>
                                     <a class="dropdown-item" href="IndexProfesores.aspx"><i class="fas fa-book-open lead"></i> Calificaciones</a>
+                                    <a class="dropdown-item" href="ReportesMaestros.aspx"><i class="fas fa-book-open lead"></i> Reportes</a>
                                     <div class="dropdown-divider"></div>
                                     <asp:Button ID="btnSalir" runat="server" Text="Salir" CssClass="border-0 bg-white dropdown-item" OnClick="btnSalir_Click"/>                                   
                                 </div>
@@ -78,7 +80,9 @@
                             <div class="col table-wrapper-scroll-y my-custom-scrollbar">
                                 <div class="row pt-4 px-2">
                                     <div class="col">
-                                        <asp:Label ID="lbGrado" runat="server" Text="Grado" CssClass="font-weight-bold"></asp:Label>
+                                        <span class="border bg-light">
+                                            <asp:Label ID="lbGrado" runat="server" Text="Grado" CssClass="font-weight-bold py-4 px-4"></asp:Label>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -112,7 +116,7 @@
                                                 <div class="dropdown-divider"></div>
                                               <asp:Button ID="Button2" runat="server" Text="Segundo Trimestre" CssClass="border-0 bg-white dropdown-item" OnClick="btnT2_Click"/>                                   
                                                 <div class="dropdown-divider"></div>
-                                            <asp:Button ID="Button3" runat="server" Text="Tercer Trimestre" CssClass="border-0 bg-white dropdown-item" OnClick="btnT3_Click"/>                                   
+                                              <asp:Button ID="Button3" runat="server" Text="Tercer Trimestre" CssClass="border-0 bg-white dropdown-item" OnClick="btnT3_Click"/>                                   
                                                 <div class="dropdown-divider"></div>
                                           </div>
                                         </div>

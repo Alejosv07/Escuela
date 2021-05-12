@@ -22,6 +22,7 @@
                 <div class="frm-container">
                     <img src="assets/img/Logo.png" class="img-thumbnail my-4"/>
                     <h3 class="font-weight-bold">Login</h3>
+                    <h6 class="font-weight-bold">Colegio Santa Ana</h6>
                     <div class="input-group my-4">
                         <asp:TextBox ID="txtEmail" TextMode="Email" CssClass="form-control" name="email" placeholder="Email" runat="server"></asp:TextBox>
                         <button class="btn btn-incluide position-absolute"><i class="fas fa-user"></i></button>

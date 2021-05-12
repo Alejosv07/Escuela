@@ -28,7 +28,8 @@
             </div>
             <div class="menu">
                 <a href="MiInfoProfesor.aspx" class="d-block p-3 text-primary"><i class="fas fa-user mr-2 lead"></i> Mi información</a>
-                <a href="IndexProfesores.aspx" class="d-block p-3 text-muted"><i class="fas fa-user mr-2 lead"></i> Calificar</a>
+                <a href="IndexProfesores.aspx" class="d-block p-3 text-muted"><i class="fas fa-book-open mr-2 lead"></i> Calificar</a>
+                <a href="ReportesMaestros.aspx" class="d-block p-3 text-muted"><i class="fas fa-book-open mr-2 lead"></i> Reportes</a>            
             </div>
         </div>
 
@@ -48,7 +49,8 @@
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="MiInfoProfesor.aspx"><i class="fas fa-calendar-alt lead"></i> Mi información</a>
-                                    <a class="dropdown-item" href="IndexProfesores.aspx"><i class="fas fa-user mr-2 lead"></i> Calificaciones</a>
+                                    <a class="dropdown-item" href="IndexProfesores.aspx"><i class="fas fa-book-open lead"></i> Calificaciones</a>
+                                    <a class="dropdown-item" href="ReportesMaestros.aspx"><i class="fas fa-book-open lead"></i> Reportes</a>
                                     <div class="dropdown-divider"></div>
                                     <asp:Button ID="btnSalir" runat="server" Text="Salir" CssClass="border-0 bg-white dropdown-item" OnClick="btnSalir_Click"/>
                                 </div>

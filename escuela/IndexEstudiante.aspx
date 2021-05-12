@@ -74,9 +74,15 @@
             <div class="contenidoB">
                 <section>
                     <div class="container">
-                        <div class="row">
+                        <div class="row  pt-4 px-2 ">
                             <div class="col table-wrapper-scroll-y my-custom-scrollbar">
-
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="border bg-light">
+                                            <asp:Label ID="lbGrado" runat="server" Text="Grado" CssClass="font-weight-bold py-4 px-4"></asp:Label>
+                                        </span>
+                                    </div>
+                                </div>
                                 <div class="dropdown py-3">
                                     <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Periodos
