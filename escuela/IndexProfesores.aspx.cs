@@ -33,12 +33,25 @@ namespace escuela
             this.txtProfesorSeleccionado.Text = Convert.ToString(profesores.IdProfesores);
             if (!IsPostBack)
             {
-                System.Diagnostics.Debug.WriteLine("ID profesor:");
-                System.Diagnostics.Debug.WriteLine(this.txtProfesorSeleccionado.Text);
                 this.txtMateriaSeleccionada.Text = "1";
                 this.txtMateriaShow.Text = "Lenguaje";
                 this.txtTrimestreSeleccionado.Text = "1";
                 this.txtTrimestreShow.Text = "Primer Trimestre";
+                SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
+                con.Open();
+                SqlCommand cmd = con.CreateCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT nombre from Grado where idGrado = @idGrado";
+                cmd.Parameters.AddWithValue("@idGrado", this.profesores.IdGrado);
+                cmd.ExecuteNonQuery();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                { 
+                    this.lbGrado.Text = "Grado impartido: "+dr[0].ToString();
+                }
+                dr.Close();
+                con.Close();
             }
             this.lbActu.Text = "Ultima actualización " + DateTime.Now.ToString();
             this.navbarDropdown.InnerText = profesores.Nombre + " " + profesores.Apellido;

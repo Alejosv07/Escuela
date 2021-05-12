@@ -51,6 +51,15 @@ namespace escuela
         protected global::System.Web.UI.WebControls.Label lbActu;
 
         /// <summary>
+        /// Control lbGrado.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lbGrado;
+
+        /// <summary>
         /// Control btnLenguaje.
         /// </summary>
         /// <remarks>

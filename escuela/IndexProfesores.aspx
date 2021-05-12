@@ -76,6 +76,11 @@
                     <div class="container">
                         <div class="row">
                             <div class="col table-wrapper-scroll-y my-custom-scrollbar">
+                                <div class="row pt-4 px-2">
+                                    <div class="col">
+                                        <asp:Label ID="lbGrado" runat="server" Text="Grado" CssClass="font-weight-bold"></asp:Label>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col">
                                         <div class="dropdown my-4">

@@ -42,7 +42,8 @@ namespace escuela.Clases
             SqlConnection con = this.conexion();
             SqlCommand cmd = con.CreateCommand();
             cmd.CommandType = CommandType.Text;
-            cmd.CommandText = "select * from Grado";
+            cmd.CommandText = "select * from Grado where idGrado = @idGrado";
+            cmd.Parameters.AddWithValue("@idGrado", id);
             cmd.ExecuteNonQuery();
 
             SqlDataReader dr = cmd.ExecuteReader();
