@@ -20,7 +20,7 @@
         <div class="row align-content-center justify-content-center vh-100 text-center text-white">
             <div class="col-sm-8 col-md-6 col-lg-3">
                 <div class="frm-container">
-                    <img src="assets/img/Logo.png" class="img-thumbnail my-4"/>
+                    <img src="assets/img/" class="img-thumbnail my-4"/>
                     <h3 class="font-weight-bold">Login</h3>
                     <h6 class="font-weight-bold">Colegio Santa Ana</h6>
                     <div class="input-group my-4">

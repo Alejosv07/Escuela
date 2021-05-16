@@ -133,6 +133,12 @@ namespace escuela
                 p.Alignment = Element.ALIGN_CENTER;
                 p.Add(new Chunk("Cuadro de notas",fontTitle));
                 document.Add(p);
+                
+                Font fontEscuela = new Font(baseFont,12,1);
+                Paragraph para = new Paragraph();
+                para.Alignment = Element.ALIGN_BOTTOM;
+                para.Add(new Chunk("Colegio Santa Ana", fontEscuela));
+                document.Add(para);
                 Font font9 = FontFactory.GetFont(FontFactory.TIMES, 12);  
                 //Font fontTitle = FontFactory.GetFont(FontFactory.COURIER_BOLD, 25);
                 //Font font9 = FontFactory.GetFont(FontFactory.TIMES, 12);
@@ -144,7 +150,7 @@ namespace escuela
                 BaseFont baseFont2 = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
                 Font fontAutor = new Font(baseFont2, 8, 2, BaseColor.GRAY);
                 Paragraph pA = new Paragraph();
-                pA.Alignment = Element.ALIGN_RIGHT;
+                pA.Alignment = Element.ALIGN_LEFT;
                 pA.Add(new Chunk("Estudiante: " + this.estudiante.Nombre + " " + this.estudiante.Apellido, fontAutor));
                 pA.Add(new Chunk("\nCarnet: " + this.estudiante.Carnet, fontAutor));
                 if (trimes<4)
