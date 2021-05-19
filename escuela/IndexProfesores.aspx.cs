@@ -52,6 +52,7 @@ namespace escuela
                 }
                 dr.Close();
                 con.Close();
+                Session["Periodo"] = 1;
             }
             this.lbActu.Text = "Ultima actualización " + DateTime.Now.ToString();
             this.navbarDropdown.InnerText = profesores.Nombre + " " + profesores.Apellido;
@@ -91,25 +92,28 @@ namespace escuela
         protected void btnT1_Click(object sender, EventArgs e)
         {
             this.txtTrimestreSeleccionado.Text = "1";
+            Session["Periodo"] = 1;
             this.txtTrimestreShow.Text = "Primer Trimestre";
         }
         protected void btnT2_Click(object sender, EventArgs e)
         {
             this.txtTrimestreSeleccionado.Text = "2";
+            Session["Periodo"] = 2;
             this.txtTrimestreShow.Text = "Segundo Trimestre";
         }
         protected void btnT3_Click(object sender, EventArgs e)
         {
             this.txtTrimestreSeleccionado.Text = "3";
+            Session["Periodo"] = 3;
             this.txtTrimestreShow.Text = "Tercer Trimestre";
         }
+        protected void btnTF_Click(object sender, EventArgs e)
+        {
+            this.txtTrimestreSeleccionado.Text = "4";
+            Session["Periodo"] = 4;
+            this.btnImprimirClick(sender,e);
+        }
         
-
-        //public void cargarTablaPrincipal()
-        //{
-        //    this.GridView1.DataSource = dtProfesor();
-        //    this.GridView1.DataBind();
-        //}
 
         public DataTable dtProfesor()
         {
@@ -117,10 +121,23 @@ namespace escuela
             SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
             SqlCommand cmd = con.CreateCommand();
             cmd.CommandType = CommandType.Text;
-            cmd.CommandText = "SELECT Alumnos.apellido, Alumnos.nombre, Evaluaciones.evaluacion1 as 'Evaluación1(15%)', Evaluaciones.evaluacion2 as 'Evaluación2(35%)', Evaluaciones.evaluacion3 as 'Evaluación3(50%)' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)";
+            cmd.CommandText = "SELECT Alumnos.apellido as 'Apellido', Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluación1(35%)', Evaluaciones.evaluacion2 as 'Evaluación2(35%)', Evaluaciones.evaluacion3 as 'Evaluación3(30%)',((Evaluaciones.evaluacion1*0.35)+(Evaluaciones.evaluacion2*0.35)+(Evaluaciones.evaluacion3*0.30)) as 'PromedioPeriodo' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)";
             cmd.Parameters.AddWithValue("@idMateria", this.txtMateriaSeleccionada.Text);
             cmd.Parameters.AddWithValue("@idProfesores", this.txtProfesorSeleccionado.Text);
             cmd.Parameters.AddWithValue("@idTrimestre", this.txtTrimestreSeleccionado.Text);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.Fill(dt);
+            da.Dispose();
+            return dt;
+        }
+        public DataTable dtProfesorFinales()
+        {
+            DataTable dt = new DataTable();
+            SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
+            SqlCommand cmd = con.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+            
+            cmd.CommandText = "EXEC dbo.NotasPorMateria @usuarioProfesor = "+ this.profesores.Usuario+", @materiaGrado = "+this.txtMateriaShow.Text+";";
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.Fill(dt);
             da.Dispose();
@@ -132,29 +149,68 @@ namespace escuela
             DataTable dt = new DataTable();
             Document document = new Document();
             PdfWriter writer = PdfWriter.GetInstance(document, HttpContext.Current.Response.OutputStream);
-            dt = dtProfesor();
+            int trimes = (int)Session["Periodo"];
+            if (trimes < 4)
+            {
+                dt = dtProfesor();
+            }
+            else { 
+                dt = dtProfesorFinales();
+            }
             if (dt.Rows.Count > 0)
             {
                 document.Open();
                 BaseFont baseFont = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-
+                
+                iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(Server.MapPath("assets/img/Logo.png"));
+                document.Add(logo);
                 Font fontTitle = new Font(baseFont, 16, 1);
+                Font fontSubTitle = new Font(baseFont, 14, 1);
                 Paragraph p = new Paragraph();
-                p.Alignment = Element.ALIGN_CENTER;
-                p.Add(new Chunk("Cuadro de Notas", fontTitle));
+                p.Alignment = Element.ALIGN_LEFT;
+                Paragraph h2 = new Paragraph();
+                h2.Alignment = Element.ALIGN_CENTER;
+                p.Add(new Chunk("Colegio Santa Ana", fontTitle));
                 document.Add(p);
-                Font font9 = FontFactory.GetFont(FontFactory.TIMES, 12);
-                document.Add(new Chunk("\n"));
-                BaseFont baseFont2 = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-                Font fontAutor = new Font(baseFont2, 8, 2, BaseColor.GRAY);
-                Paragraph pA = new Paragraph();
-                pA.Alignment = Element.ALIGN_RIGHT;
-                pA.Add(new Chunk("Profesor: " + this.profesores.Nombre + " " + this.profesores.Apellido, fontAutor));
-                pA.Add(new Chunk("\nMateria: " + this.txtMateriaShow.Text, fontAutor));
-                pA.Add(new Chunk("\nPeriodo: " + this.txtTrimestreShow.Text, fontAutor));
-                pA.Add(new Chunk("\nFecha de impresión: " + DateTime.Now.ToShortDateString(), fontAutor));
                 document.Add(new Chunk("\n"));
 
+                Font fontEscuela = FontFactory.GetFont(FontFactory.TIMES, 12);
+                Paragraph para = new Paragraph();
+                para.Alignment = Element.ALIGN_LEFT;
+                para.Add(new Chunk("Docente: " + this.profesores.Nombre + " " + this.profesores.Apellido, fontEscuela));
+                para.Add(new Chunk("\nMateria: " + this.txtMateriaShow.Text, fontEscuela));
+                SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
+                con.Open();
+                SqlCommand cmd = con.CreateCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT nombre from Grado where idGrado = @idGrado";
+                cmd.Parameters.AddWithValue("@idGrado", this.profesores.IdGrado);
+                cmd.ExecuteNonQuery();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                {
+                    para.Add(new Chunk("\nImpartiendo: " + dr[0].ToString(), fontEscuela));
+                }
+                dr.Close();
+                con.Close();
+                para.Add(new Chunk("\nFecha de impresión: " + DateTime.Now.ToShortDateString(), fontEscuela));
+                document.Add(new Chunk("\n"));
+                document.Add(new Chunk("\n"));
+                if (trimes < 4)
+                {
+                    h2.Add(new Chunk("\nPeriodo " + trimes, fontSubTitle));
+                }
+                else
+                {
+                    h2.Add(new Chunk("\nNotas finales", fontSubTitle));
+                }
+                h2.Add(new Chunk("\n", fontSubTitle));
+                document.Add(para);
+                document.Add(h2);
+                document.Add(new Chunk("\n"));
+
+                Font font9 = FontFactory.GetFont(FontFactory.TIMES, 12);
                 PdfPTable table = new PdfPTable(dt.Columns.Count);
 
 

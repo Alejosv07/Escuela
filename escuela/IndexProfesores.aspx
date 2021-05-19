@@ -27,8 +27,8 @@
                 </div>
             </div>
             <div class="menu">
-                <a href="MiInfoProfesor.aspx" class="d-block p-3 text-primary"><i class="fas fa-user mr-2 lead"></i> Mi información</a>
-                <a href="IndexProfesores.aspx" class="d-block p-3 text-muted"><i class="fas fa-book-open mr-2 lead"></i> Calificar</a>
+                <a href="MiInfoProfesor.aspx" class="d-block p-3 text-muted"><i class="fas fa-user mr-2 lead"></i> Mi información</a>
+                <a href="IndexProfesores.aspx" class="d-block p-3 text-primary"><i class="fas fa-book-open mr-2 lead"></i> Calificar</a>
                 <a href="ReportesMaestros.aspx" class="d-block p-3 text-muted"><i class="fas fa-book-open mr-2 lead"></i> Reportes</a>            
             </div>
         </div>
@@ -174,6 +174,9 @@
                         <div class="row my-2">
                             <div class="col">
                                 <button class="btn btn-primary" runat="server" onserverclick="btnImprimirClick"><i class="fas fa-print"></i> Imprimir</button>
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-primary" runat="server" onserverclick="btnTF_Click"><i class="fas fa-print"></i> Imprimir promedios finales</button>
                             </div>
                         </div>
                     </div>

@@ -85,9 +85,6 @@
                                     <div class="col">
                                         <button id="btnImprimirPromediosFinales" class="btn btn-primary" runat="server" onserverclick="btnImprimirPromedioClick"><i class="fas fa-print"></i> Promedios alumnos</button>
                                     </div>
-                                    <div class="col">
-                                        <button id="btnImprimirAsistencia" class="btn btn-primary" runat="server" onserverclick="btnImprimirClick"><i class="fas fa-print"></i> Asistencia</button>
-                                    </div>
                                 </div>
                             </div>
                         </div>

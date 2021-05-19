@@ -58,35 +58,31 @@ namespace escuela
             document.Open();
 
             BaseFont baseFont = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+            iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(Server.MapPath("assets/img/Logo.png"));
+            document.Add(logo);
 
             Font fontTitle = new Font(baseFont, 16, 1);
+            Font fontSubTitle = new Font(baseFont, 14, 1);
             Paragraph p = new Paragraph();
-            p.Alignment = Element.ALIGN_CENTER;
-            p.Add(new Chunk("Datos personales", fontTitle));
+            p.Alignment = Element.ALIGN_LEFT;
+            Paragraph h2 = new Paragraph();
+            h2.Alignment = Element.ALIGN_CENTER;
+            p.Add(new Chunk("Colegio Santa Ana", fontTitle));
             document.Add(p);
-            Font font9 = FontFactory.GetFont(FontFactory.TIMES, 12);
             document.Add(new Chunk("\n"));
-            BaseFont baseFont2 = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-            Font fontAutor = new Font(baseFont2, 8, 2, BaseColor.GRAY);
-            Paragraph pA = new Paragraph();
-            pA.Alignment = Element.ALIGN_RIGHT;
-            pA.Add(new Chunk("\nFecha de impresión: " + DateTime.Now.ToShortDateString(), fontAutor));
-            document.Add(new Chunk("\n"));
-            //Escogemos el tipo de letra que tendra el pdf
-            Font fonTextG = FontFactory.GetFont(FontFactory.TIMES, 13);
-
-            document.Add(new Paragraph(10, "Nombres: " + this.profesores.Nombre.Trim(), fonTextG));
-            document.Add(new Chunk("\n"));
-            document.Add(new Paragraph(10, "Apellidos: " + this.profesores.Apellido.Trim(), fonTextG));
-            document.Add(new Chunk("\n"));
-            //document.Add(new Paragraph(10, "Grado: " + this.estudiante.Grado, fonTextG));
-            document.Add(new Chunk("\n"));
-            document.Add(new Paragraph(10, "Email: " + this.profesores.Email, fonTextG));
-            document.Add(new Chunk("\n"));
-            document.Add(new Paragraph(10, "Usuario: " + this.profesores.Usuario, fonTextG));
-            document.Add(new Chunk("\n"));
-            document.Add(new Paragraph(10, "Contraseña: " + this.profesores.Contra, fonTextG));
-            document.Add(new Chunk("\n"));
+            Font fontEscuela = FontFactory.GetFont(FontFactory.TIMES, 12);
+            Paragraph para = new Paragraph();
+            para.Alignment = Element.ALIGN_LEFT;
+            h2.Add(new Paragraph(10, "Datos personales: " + this.profesores.Nombre.Trim(), fontSubTitle));
+            document.Add(h2);
+            para.Add(new Paragraph(10, "\n "));
+            para.Add(new Paragraph(10, "\nNombres: " + this.profesores.Nombre.Trim(), fontEscuela));
+            para.Add(new Paragraph(10, "\nApellido: " + this.profesores.Apellido.Trim(), fontEscuela));
+            para.Add(new Paragraph(10, "\nEmail: " + this.profesores.Email.Trim(), fontEscuela));
+            para.Add(new Paragraph(10, "\nUsuario: " + this.profesores.Usuario.Trim(), fontEscuela));
+            para.Add(new Paragraph(10, "\nContraseña: " + this.profesores.Contra.Trim(), fontEscuela));
+            para.Add(new Paragraph(10, "\nFecha de impresión: " + DateTime.Now.ToShortDateString(), fontEscuela));
+            document.Add(para);
             document.Close();
 
             Response.ContentType = "application/pdf";

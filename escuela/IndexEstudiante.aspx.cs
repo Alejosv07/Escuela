@@ -127,45 +127,56 @@ namespace escuela
             {
                 document.Open();
                 BaseFont baseFont = BaseFont.CreateFont(BaseFont.TIMES_ROMAN,BaseFont.CP1252,BaseFont.NOT_EMBEDDED);
-
+                iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(Server.MapPath("assets/img/Logo.png"));
+                document.Add(logo);
                 Font fontTitle = new Font(baseFont,16,1);
+                Font fontSubTitle = new Font(baseFont,14,1);
                 Paragraph p = new Paragraph();
-                p.Alignment = Element.ALIGN_CENTER;
-                p.Add(new Chunk("Cuadro de notas",fontTitle));
+                p.Alignment = Element.ALIGN_LEFT;
+                Paragraph h2 = new Paragraph();
+                h2.Alignment = Element.ALIGN_CENTER;
+                p.Add(new Chunk("Colegio Santa Ana", fontTitle));
                 document.Add(p);
-                
-                Font fontEscuela = new Font(baseFont,12,1);
-                Paragraph para = new Paragraph();
-                para.Alignment = Element.ALIGN_BOTTOM;
-                para.Add(new Chunk("Colegio Santa Ana", fontEscuela));
-                document.Add(para);
-                Font font9 = FontFactory.GetFont(FontFactory.TIMES, 12);  
-                //Font fontTitle = FontFactory.GetFont(FontFactory.COURIER_BOLD, 25);
-                //Font font9 = FontFactory.GetFont(FontFactory.TIMES, 12);
-
-                //document.Add(new Paragraph(20, "Cuadro de notas", fontTitle));
                 document.Add(new Chunk("\n"));
-
-
-                BaseFont baseFont2 = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-                Font fontAutor = new Font(baseFont2, 8, 2, BaseColor.GRAY);
-                Paragraph pA = new Paragraph();
-                pA.Alignment = Element.ALIGN_LEFT;
-                pA.Add(new Chunk("Estudiante: " + this.estudiante.Nombre + " " + this.estudiante.Apellido, fontAutor));
-                pA.Add(new Chunk("\nCarnet: " + this.estudiante.Carnet, fontAutor));
-                if (trimes<4)
+                
+                Font fontEscuela = FontFactory.GetFont(FontFactory.TIMES, 12);
+                Paragraph para = new Paragraph();
+                para.Alignment = Element.ALIGN_LEFT;
+                para.Add(new Chunk("Estudiante: " + this.estudiante.Nombre+" "+this.estudiante.Apellido, fontEscuela));
+                para.Add(new Chunk("\nCarnet: " + this.estudiante.Carnet, fontEscuela));
+                SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
+                con.Open();
+                SqlCommand cmd = con.CreateCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT nombre from Grado where idGrado = @idGrado";
+                cmd.Parameters.AddWithValue("@idGrado", this.estudiante.Grado);
+                cmd.ExecuteNonQuery();
+                SqlDataReader dr = cmd.ExecuteReader();
+                
+                if (dr.Read())
                 {
-                    pA.Add(new Chunk("\nPeriodo: " + trimes , fontAutor));
+                    para.Add(new Chunk("\nCursando: " + dr[0].ToString(), fontEscuela));
                 }
-                else{ 
-                    pA.Add(new Chunk("\nNotas finales" , fontAutor));
+                dr.Close();
+                con.Close();
+                para.Add(new Chunk("\nFecha de impresión: " + DateTime.Now.ToShortDateString(), fontEscuela));
+                document.Add(new Chunk("\n"));
+                document.Add(new Chunk("\n"));
+                if (trimes < 4)
+                {
+                    h2.Add(new Chunk("\nPeriodo " + trimes, fontSubTitle));
                 }
-                pA.Add(new Chunk("\nFecha de impresión: " + DateTime.Now.ToShortDateString(), fontAutor));
-                document.Add(pA);
+                else
+                {
+                    h2.Add(new Chunk("\nNotas finales", fontSubTitle));
+                }
+                h2.Add(new Chunk("\n", fontSubTitle));
+                document.Add(para);
+                document.Add(h2);
+                Font font9 = FontFactory.GetFont(FontFactory.TIMES, 12);  
 
                 PdfPTable table = new PdfPTable(dt.Columns.Count);
 
-                //document.Add(new Paragraph(20, "Estudiante: "+this.estudiante.Nombre+" "+ this.estudiante.Apellido, font9));
                 document.Add(new Chunk("\n"));
 
                 float[] widths = new float[dt.Columns.Count];
