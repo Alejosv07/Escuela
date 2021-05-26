@@ -37,34 +37,28 @@ namespace escuela.Clases
             cmd.CommandType = CommandType.Text;
             if (e.Grado <= 18)
             {
-                if (trimestre == 4)
+                if (trimestre == 5)
                 {
                     cmd.CommandText = "EXEC dbo.NotasFinales @usuario = '" + e.Usuario + "'";
                 }
                 else
                 {
-                    cmd.CommandText = "select Materia.materia as Materia,evaluacion1 as 'Evaluacion1(35%)',evaluacion2 as 'Evaluacion2(35%)',evaluacion3 as 'Evaluacion3(30%)',CONVERT(DECIMAL(10,2),((evaluacion1*0.35)+(evaluacion2*0.35)+(evaluacion3*0.30))) as Promedio, Case When CONVERT(DECIMAL(10, 2), ((evaluacion1 * 0.35) + (evaluacion2 * 0.35) + (evaluacion3 * 0.30))) > 5 THEN 'Aprobado' When CONVERT(DECIMAL(10,2),((evaluacion1 * 0.35) + (evaluacion2 * 0.35) + (evaluacion3 * 0.30))) < 6 THEN 'Reprobado' END AS Estado from Evaluaciones inner join Materia on Materia.idMateria = Evaluaciones.idMateria where Evaluaciones.idAlumno = @idAlumno and Evaluaciones.idTrimestre = @idTrimestre and Evaluaciones.idMateria < 5; ";
+                    cmd.CommandText = "select Materia.materia as Materia,evaluacion1 as 'Evaluacion1(35%)',evaluacion2 as 'Evaluacion2(35%)',evaluacion3 as 'Evaluacion3(30%)',CONVERT(DECIMAL(10,2),((evaluacion1*0.35)+(evaluacion2*0.35)+(evaluacion3*0.30))) as Promedio, Case When CONVERT(DECIMAL(10, 2), ((evaluacion1 * 0.35) + (evaluacion2 * 0.35) + (evaluacion3 * 0.30))) > 5 THEN 'Aprobado' When CONVERT(DECIMAL(10,2),((evaluacion1 * 0.35) + (evaluacion2 * 0.35) + (evaluacion3 * 0.30))) < 6 THEN 'Reprobado' END AS Estado from Evaluaciones inner join Materia on Materia.idMateria = Evaluaciones.idMateria where Evaluaciones.idAlumno = @idAlumno and Evaluaciones.idTrimestre = @idTrimestre and Evaluaciones.idMateria <= 5; ";
                     cmd.Parameters.AddWithValue("@idAlumno", t.IdAlumno);
                     cmd.Parameters.AddWithValue("@idTrimestre", trimestre);
-                    //cmd.CommandText = "select nombre, (SUM(notaFinal) / 3) as promedioFinal, materia from (select Alumnos.nombre, ((Evaluaciones.evaluacion1 * 0.15) + (Evaluaciones.evaluacion2 * 0.35) + (Evaluaciones.evaluacion3 * 0.50)) as notaFinal, Materia.materia, Trimestre.numeroTrimestre from Alumnos inner join AlumnoTrimestre on Alumnos.idAlumno = AlumnoTrimestre.idAlumno inner join Trimestre on AlumnoTrimestre.idTrimestre = AlumnoTrimestre.idTrimestre inner join Evaluaciones on Trimestre.idTrimestre = Evaluaciones.idTrimestre inner join Materia on Evaluaciones.idMateria = Materia.idMateria where Alumnos.idAlumno = Evaluaciones.idAlumno and Alumnos.usuario = @usuario and Evaluaciones.idMateria = @idMateria group by Alumnos.nombre, Evaluaciones.evaluacion1, Evaluaciones.evaluacion2, Evaluaciones.evaluacion3, Materia.materia, Trimestre.numeroTrimestre) as T1 group by nombre, materia";
-                    //cmd.Parameters.AddWithValue("@idTrimestre", trimestre);
                 }
             }
             else {
                 //Es bachillerato
-                if (trimestre == 4)
+                if (trimestre == 5)
                 {
                     cmd.CommandText = "EXEC dbo.NotasFinales2 @usuario = '" + e.Usuario + "'";
                 }
                 else
                 {
-                    cmd.CommandText = "select Materia.materia as Materia,evaluacion1 as 'Evaluacion1(15%)'," +
-                        "evaluacion2 as 'Evaluacion2(35%)',evaluacion3 as 'Evaluacion3(50%)',CONVERT(DECIMAL(10,2),((evaluacion1*0.35)+(evaluacion2*0.35)+(evaluacion3*0.30))) as Promedio from Evaluaciones inner join Materia on Materia.idMateria " +
-                        "= Evaluaciones.idMateria where Evaluaciones.idAlumno = @idAlumno and Evaluaciones.idTrimestre = @idTrimestre;";
+                    cmd.CommandText = "select Materia.materia as Materia,evaluacion1 as 'Evaluacion1(25%)',evaluacion2 as 'Evaluacion2(25%)',evaluacion3 as 'Evaluacion3(25%)',evaluacion4 as 'Evaluacion4(25%)',CONVERT(DECIMAL(10,2),((evaluacion1*0.25)+(evaluacion2*0.25)+(evaluacion3*0.25)+(evaluacion4*0.25))) as Promedio, Case When CONVERT(DECIMAL(10, 2), ((evaluacion1 * 0.35) + (evaluacion2 * 0.35) + (evaluacion3 * 0.30))) > 5 THEN 'Aprobado' When CONVERT(DECIMAL(10,2),((evaluacion1 * 0.35) + (evaluacion2 * 0.35) + (evaluacion3 * 0.30))) < 6 THEN 'Reprobado' END AS Estado from Evaluaciones inner join Materia on Materia.idMateria = Evaluaciones.idMateria where Evaluaciones.idAlumno = @idAlumno and Evaluaciones.idTrimestre = @idTrimestre; ";
                     cmd.Parameters.AddWithValue("@idAlumno", t.IdAlumno);
                     cmd.Parameters.AddWithValue("@idTrimestre", trimestre);
-                    //cmd.CommandText = "select nombre, (SUM(notaFinal) / 3) as promedioFinal, materia from (select Alumnos.nombre, ((Evaluaciones.evaluacion1 * 0.15) + (Evaluaciones.evaluacion2 * 0.35) + (Evaluaciones.evaluacion3 * 0.50)) as notaFinal, Materia.materia, Trimestre.numeroTrimestre from Alumnos inner join AlumnoTrimestre on Alumnos.idAlumno = AlumnoTrimestre.idAlumno inner join Trimestre on AlumnoTrimestre.idTrimestre = AlumnoTrimestre.idTrimestre inner join Evaluaciones on Trimestre.idTrimestre = Evaluaciones.idTrimestre inner join Materia on Evaluaciones.idMateria = Materia.idMateria where Alumnos.idAlumno = Evaluaciones.idAlumno and Alumnos.usuario = @usuario and Evaluaciones.idMateria = @idMateria group by Alumnos.nombre, Evaluaciones.evaluacion1, Evaluaciones.evaluacion2, Evaluaciones.evaluacion3, Materia.materia, Trimestre.numeroTrimestre) as T1 group by nombre, materia";
-                    //cmd.Parameters.AddWithValue("@idTrimestre", trimestre);
                 }
             }
             cmd.ExecuteNonQuery();

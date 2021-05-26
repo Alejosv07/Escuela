@@ -1,6 +1,7 @@
 ﻿using escuela.Clases;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.draw;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -52,44 +53,99 @@ namespace escuela
         protected void btnPDFGrado_Click(object sender, EventArgs e)
         {
             DataTable dt = new DataTable();
-            Document document = new Document();
+            Document document = new Document(iTextSharp.text.PageSize.LETTER, 30f, 20f, 130f, 40f);
             PdfWriter writer = PdfWriter.GetInstance(document, HttpContext.Current.Response.OutputStream);
             dt = dtG("SELECT [nombre], [seccion] FROM [Grado]");
             if (dt.Rows.Count > 0)
             {
+                writer.PageEvent = new HeaderFooterPDF("Administrador", "Nomina de grados", "" + DateTime.Now.Year);
+                //Abrimos documento
                 document.Open();
-                BaseFont baseFont = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                //Letra personalizada
+                string nameFont = HttpContext.Current.Server.MapPath("assets/fonts/ArialCE.ttf");
 
-                Font fontTitle = new Font(baseFont, 16, 1);
-                Paragraph p = new Paragraph();
-                p.Alignment = Element.ALIGN_CENTER;
-                p.Add(new Chunk("Grados Registrados", fontTitle));
-                document.Add(p);
-                Font font9 = FontFactory.GetFont(FontFactory.TIMES, 12);
+                BaseFont baseFont = BaseFont.CreateFont(nameFont, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                Font fontText = new Font(baseFont, 10, 0, BaseColor.BLACK);
+                Font fontTextBold = new Font(baseFont, 10, 1, BaseColor.BLACK);
+                Font fontTextUnderline = new Font(baseFont, 10, 4, BaseColor.BLACK);
+
+                //Table detalles
+                PdfPTable tbDetalles = new PdfPTable(6);
+                tbDetalles.WidthPercentage = 100f;
+                tbDetalles.TotalWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin;
+                tbDetalles.DefaultCell.Border = 0;
+
+                //Titulo Administrador
+                PdfPCell _cell = new PdfPCell(new Paragraph("Administrador: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Detalle titulo Administrador
+                _cell = new PdfPCell(new Paragraph(this.profesores.Nombre + " " + this.profesores.Apellido, fontText));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Titulo Email
+                _cell = new PdfPCell(new Paragraph("Email: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Detalle titulo Email
+                _cell = new PdfPCell(new Paragraph(this.profesores.Email, fontText));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                document.Add(tbDetalles);
+
                 document.Add(new Chunk("\n"));
-                BaseFont baseFont2 = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-                Font fontAutor = new Font(baseFont2, 8, 2, BaseColor.GRAY);
-                Paragraph pA = new Paragraph();
-                pA.Alignment = Element.ALIGN_RIGHT;
-                pA.Add(new Chunk("Administrador: " + this.profesores.Nombre + " " + this.profesores.Apellido, fontAutor));
-                pA.Add(new Chunk("\nFecha de impresión: " + DateTime.Now.ToShortDateString(), fontAutor));
                 document.Add(new Chunk("\n"));
+                document.Add(new Chunk("\n"));
+
+                //Linea
+                Chunk linea = new Chunk(new LineSeparator(1f, 100f, BaseColor.BLACK, Element.ALIGN_CENTER, -1));
+                document.Add(new Paragraph(linea));
+                document.Add(new Chunk("\n"));
+                document.Add(new Chunk("Nomina:", fontTextUnderline));
 
                 PdfPTable table = new PdfPTable(dt.Columns.Count);
 
-                float[] widths = new float[dt.Columns.Count];
-                for (int i = 0; i < dt.Columns.Count; i++)
-                    widths[i] = 4f;
+                table.WidthPercentage = 100f;
 
-                table.SetWidths(widths);
-                table.WidthPercentage = 90;
-
-                PdfPCell cell = new PdfPCell(new Phrase("columns"));
-                cell.Colspan = dt.Columns.Count;
+                _cell = new PdfPCell();
 
                 foreach (DataColumn c in dt.Columns)
                 {
-                    table.AddCell(new Phrase(c.ColumnName, font9));
+                    _cell = new PdfPCell(new Paragraph(new Chunk(c.ColumnName, fontText)));
+                    _cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    table.AddCell(_cell);
                 }
 
                 foreach (DataRow r in dt.Rows)
@@ -98,14 +154,16 @@ namespace escuela
                     {
                         for (int h = 0; h < dt.Columns.Count; h++)
                         {
-                            table.AddCell(new Phrase(r[h].ToString(), font9));
+                            _cell = new PdfPCell(new Paragraph(new Chunk(r[h].ToString(), fontText)));
+                            _cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                            table.AddCell(_cell);
                         }
                     }
                 }
                 document.Add(table);
                 document.Close();
                 Response.ContentType = "application/pdf";
-                Response.AddHeader("content-disposition", "attachment;filename=GradosRegistrados" + ".pdf");
+                Response.AddHeader("content-disposition", "attachment;filename=NominaGradosRegistrados" + ".pdf");
                 HttpContext.Current.Response.Write(document);
                 Response.Flush();
                 Response.End();
@@ -114,44 +172,100 @@ namespace escuela
         protected void btnPDFMaterias_Click(object sender, EventArgs e)
         {
             DataTable dt = new DataTable();
-            Document document = new Document();
+            Document document = new Document(iTextSharp.text.PageSize.LETTER, 30f, 20f, 130f, 40f);
             PdfWriter writer = PdfWriter.GetInstance(document, HttpContext.Current.Response.OutputStream);
+
             dt = dtG("SELECT [materia] FROM [Materia]");
             if (dt.Rows.Count > 0)
             {
+                writer.PageEvent = new HeaderFooterPDF("Administrador", "Nomina de materias", "" + DateTime.Now.Year);
+                //Abrimos documento
                 document.Open();
-                BaseFont baseFont = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                //Letra personalizada
+                string nameFont = HttpContext.Current.Server.MapPath("assets/fonts/ArialCE.ttf");
 
-                Font fontTitle = new Font(baseFont, 16, 1);
-                Paragraph p = new Paragraph();
-                p.Alignment = Element.ALIGN_CENTER;
-                p.Add(new Chunk("Materias Registradas", fontTitle));
-                document.Add(p);
-                Font font9 = FontFactory.GetFont(FontFactory.TIMES, 12);
+                BaseFont baseFont = BaseFont.CreateFont(nameFont, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                Font fontText = new Font(baseFont, 10, 0, BaseColor.BLACK);
+                Font fontTextBold = new Font(baseFont, 10, 1, BaseColor.BLACK);
+                Font fontTextUnderline = new Font(baseFont, 10, 4, BaseColor.BLACK);
+
+                //Table detalles
+                PdfPTable tbDetalles = new PdfPTable(6);
+                tbDetalles.WidthPercentage = 100f;
+                tbDetalles.TotalWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin;
+                tbDetalles.DefaultCell.Border = 0;
+
+                //Titulo Administrador
+                PdfPCell _cell = new PdfPCell(new Paragraph("Administrador: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Detalle titulo Administrador
+                _cell = new PdfPCell(new Paragraph(this.profesores.Nombre + " " + this.profesores.Apellido, fontText));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Titulo Email
+                _cell = new PdfPCell(new Paragraph("Email: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Detalle titulo Email
+                _cell = new PdfPCell(new Paragraph(this.profesores.Email, fontText));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                document.Add(tbDetalles);
+
                 document.Add(new Chunk("\n"));
-                BaseFont baseFont2 = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-                Font fontAutor = new Font(baseFont2, 8, 2, BaseColor.GRAY);
-                Paragraph pA = new Paragraph();
-                pA.Alignment = Element.ALIGN_RIGHT;
-                pA.Add(new Chunk("Administrador: " + this.profesores.Nombre + " " + this.profesores.Apellido, fontAutor));
-                pA.Add(new Chunk("\nFecha de impresión: " + DateTime.Now.ToShortDateString(), fontAutor));
                 document.Add(new Chunk("\n"));
+                document.Add(new Chunk("\n"));
+
+                //Linea
+                Chunk linea = new Chunk(new LineSeparator(1f, 100f, BaseColor.BLACK, Element.ALIGN_CENTER, -1));
+                document.Add(new Paragraph(linea));
+                document.Add(new Chunk("\n"));
+                document.Add(new Chunk("Nomina:", fontTextUnderline));
 
                 PdfPTable table = new PdfPTable(dt.Columns.Count);
 
-                float[] widths = new float[dt.Columns.Count];
-                for (int i = 0; i < dt.Columns.Count; i++)
-                    widths[i] = 4f;
+                table.WidthPercentage = 100f;
 
-                table.SetWidths(widths);
-                table.WidthPercentage = 90;
-
-                PdfPCell cell = new PdfPCell(new Phrase("columns"));
-                cell.Colspan = dt.Columns.Count;
+                _cell = new PdfPCell();
 
                 foreach (DataColumn c in dt.Columns)
                 {
-                    table.AddCell(new Phrase(c.ColumnName, font9));
+                    _cell = new PdfPCell(new Paragraph(new Chunk(c.ColumnName, fontText)));
+                    _cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    table.AddCell(_cell);
                 }
 
                 foreach (DataRow r in dt.Rows)
@@ -160,14 +274,16 @@ namespace escuela
                     {
                         for (int h = 0; h < dt.Columns.Count; h++)
                         {
-                            table.AddCell(new Phrase(r[h].ToString(), font9));
+                            _cell = new PdfPCell(new Paragraph(new Chunk(r[h].ToString(), fontText)));
+                            _cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                            table.AddCell(_cell);
                         }
                     }
                 }
                 document.Add(table);
                 document.Close();
                 Response.ContentType = "application/pdf";
-                Response.AddHeader("content-disposition", "attachment;filename=MateriasRegistradas" + ".pdf");
+                Response.AddHeader("content-disposition", "attachment;filename=NominaMaterias" + ".pdf");
                 HttpContext.Current.Response.Write(document);
                 Response.Flush();
                 Response.End();

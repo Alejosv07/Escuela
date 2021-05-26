@@ -86,58 +86,54 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col">
-                                        <div class="dropdown my-4">
-                                          <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Materias
-                                          </button>
-                                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                              <asp:Button ID="btnLenguaje" runat="server" Text="Lenguaje" CssClass="border-0 bg-white dropdown-item" OnClick="btnP1_Click"/>                                   
-                                                <div class="dropdown-divider"></div>
-                                              <asp:Button ID="btnSociales" runat="server" Text="Sociales" CssClass="border-0 bg-white dropdown-item" OnClick="btnP2_Click"/>                                   
-                                                <div class="dropdown-divider"></div>
-                                            <asp:Button ID="btnMatematicas" runat="server" Text="Matematicás" CssClass="border-0 bg-white dropdown-item" OnClick="btnP3_Click"/>                                   
-                                                <div class="dropdown-divider"></div>
-                                              <asp:Button ID="btnCiencia" runat="server" Text="Ciencias" CssClass="border-0 bg-white dropdown-item" OnClick="btnP4_Click"/>                                   
-                                                <div class="dropdown-divider"></div>
-                                              <asp:Button ID="btnIngles" runat="server" Text="Ingles" CssClass="border-0 bg-white dropdown-item" OnClick="btnP5_Click"/>                                   
-                                                <div class="dropdown-divider"></div>
-                                          </div>
+                                    <div class="col my-4">
+                                        <div class="bg-success rounded py-1" style="width: 75%">
+                                            <asp:Label Text="Materia: " runat="server" CssClass="text-white px-2"/>
+                                            <asp:DropDownList ID="DropDownList1" runat="server" CssClass="btn btn-success dropdown-toggle" 
+                                                DataSourceID="SqlDataSource2" DataTextField="Materia" 
+                                                DataValueField="idMateria" AutoPostBack="True" OnSelectedIndexChanged="DropDownList1_SelectedIndexChanged">
+                                            </asp:DropDownList>
+                                            <asp:SqlDataSource ID="SqlDataSource2" runat="server" 
+                                                ConnectionString="<%$ ConnectionStrings:ConnectionString %>" 
+                                                SelectCommand="select Materia.materia as 'Materia',Materia.idMateria from Evaluaciones inner join Materia on Materia.idMateria = Evaluaciones.idMateria where Evaluaciones.idProfesores = @idProfesores group by Materia.materia,Materia.idMateria;">
+                                                <SelectParameters>
+                                                    <asp:ControlParameter ControlID="txtProfesorSeleccionado" Name="idProfesores" 
+                                                        PropertyName="Text" />
+                                                </SelectParameters>
+                                            </asp:SqlDataSource>
                                         </div>
-                                        <asp:TextBox ID="txtMateriaShow" runat="server" CssClass="form-control" Enabled="false"></asp:TextBox>
                                     </div>
-                                    <div class="col">
-                                        <div class="dropdown my-4">
-                                          <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Trimestres
-                                          </button>
-                                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                                              <asp:Button ID="Button1" runat="server" Text="Primer Trimestre" CssClass="border-0 bg-white dropdown-item" OnClick="btnT1_Click"/>                                   
-                                                <div class="dropdown-divider"></div>
-                                              <asp:Button ID="Button2" runat="server" Text="Segundo Trimestre" CssClass="border-0 bg-white dropdown-item" OnClick="btnT2_Click"/>                                   
-                                                <div class="dropdown-divider"></div>
-                                              <asp:Button ID="Button3" runat="server" Text="Tercer Trimestre" CssClass="border-0 bg-white dropdown-item" OnClick="btnT3_Click"/>                                   
-                                                <div class="dropdown-divider"></div>
-                                          </div>
+                                    <div class="col my-4">
+                                        <div class="bg-success rounded py-1" style="width: 45%">
+                                            <asp:Label Text="Trimestre: " runat="server" CssClass="text-white px-2"/>
+                                            <asp:DropDownList ID="DropDownList2" runat="server" CssClass="btn btn-success dropdown-toggle" 
+                                                 DataSourceID="SqlDataSource3" DataTextField="Trimestre" 
+                                                 DataValueField="Trimestre" AutoPostBack="True" OnSelectedIndexChanged="DropDownList2_SelectedIndexChanged">
+                                            </asp:DropDownList>
+                                            <asp:SqlDataSource ID="SqlDataSource3" runat="server" 
+                                                ConnectionString="<%$ ConnectionStrings:ConnectionString %>" 
+                                                SelectCommand="select Evaluaciones.idTrimestre as 'Trimestre' from Evaluaciones inner join Materia on Materia.idMateria = Evaluaciones.idMateria where Evaluaciones.idProfesores = @idProfesores group by Evaluaciones.idTrimestre;">
+                                                <SelectParameters>
+                                                    <asp:ControlParameter ControlID="txtProfesorSeleccionado" Name="idProfesores" 
+                                                        PropertyName="Text" />
+                                                </SelectParameters>
+                                            </asp:SqlDataSource>
                                         </div>
-                                        <asp:TextBox ID="txtTrimestreShow" runat="server" CssClass="form-control" Enabled="false"></asp:TextBox>
                                     </div>
                                 </div>
 
-                                <asp:TextBox ID="txtMateriaSeleccionada" runat="server" CssClass="form-control d-none"></asp:TextBox>
                                 <asp:TextBox ID="txtProfesorSeleccionado" runat="server" CssClass="form-control d-none"></asp:TextBox>
-                                <asp:TextBox ID="txtTrimestreSeleccionado" runat="server" CssClass="form-control d-none"></asp:TextBox>
 
-
-                                <asp:GridView ID="GridView1" runat="server" AutoGenerateEditButton="True" AutoGenerateColumns="False" DataKeyNames="idEvaluaciones" DataSourceID="SqlDataSource1" CellPadding="4" ForeColor="#333333" GridLines="None" Width="100%">
+                                <asp:GridView ID="GridView1" runat="server" AutoGenerateEditButton="True" AutoGenerateColumns="False" DataKeyNames="idEvaluaciones" DataSourceID="SqlDataSource11" CellPadding="4" ForeColor="#333333" GridLines="None" Width="100%" OnRowDataBound="GridView1_RowDataBound">
                                     <AlternatingRowStyle BackColor="White" />
                                     <Columns>
                                         <asp:BoundField DataField="idEvaluaciones" HeaderText="idEvaluaciones" InsertVisible="False" ReadOnly="True" SortExpression="idEvaluaciones" />
-                                        <asp:BoundField DataField="apellido" HeaderText="apellido" SortExpression="apellido" />
-                                        <asp:BoundField DataField="nombre" HeaderText="nombre" SortExpression="nombre" />
-                                        <asp:BoundField DataField="evaluacion1" HeaderText="evaluacion1" SortExpression="evaluacion1" />
-                                        <asp:BoundField DataField="evaluacion2" HeaderText="evaluacion2" SortExpression="evaluacion2" />
-                                        <asp:BoundField DataField="evaluacion3" HeaderText="evaluacion3" SortExpression="evaluacion3" />
+                                        <asp:BoundField DataField="Apellido" HeaderText="Apellido" SortExpression="Apellido" ReadOnly="True"/>
+                                        <asp:BoundField DataField="Nombre" HeaderText="Nombre" SortExpression="Nombre" ReadOnly="True"/>
+                                        <asp:BoundField DataField="Evaluacion1" HeaderText="Evaluacion1" SortExpression="Evaluacion1" />
+                                        <asp:BoundField DataField="Evaluacion2" HeaderText="Evaluacion2" SortExpression="Evaluacion2" />
+                                        <asp:BoundField DataField="Evaluacion3" HeaderText="Evaluacion3" SortExpression="Evaluacion3" />
+                                        <asp:BoundField DataField="Evaluacion4" HeaderText="Evaluacion4" SortExpression="Evaluacion4" />
                                     </Columns>
                                     <EditRowStyle BackColor="#2461BF" />
                                     <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
@@ -151,13 +147,28 @@
                                     <SortedDescendingHeaderStyle BackColor="#4870BE" />
                                 </asp:GridView>
 
+                                <asp:SqlDataSource ID="SqlDataSource11" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT Evaluaciones.idEvaluaciones,Alumnos.apellido as Apellido,Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluacion1', Evaluaciones.evaluacion2 as 'Evaluacion2', Evaluaciones.evaluacion3 as 'Evaluacion3',Evaluaciones.evaluacion4 as 'Evaluacion4' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)" UpdateCommand="UPDATE Evaluaciones SET evaluacion1 = @evaluacion1, evaluacion2 = @evaluacion2, evaluacion3 = @evaluacion3,evaluacion4 = @evaluacion4 WHERE (idEvaluaciones = @idEvaluaciones)">
+                                    <SelectParameters>
+                                        <asp:ControlParameter ControlID="DropDownList1" Name="idMateria" PropertyName="SelectedValue" />
+                                        <asp:ControlParameter ControlID="txtProfesorSeleccionado" Name="idProfesores" PropertyName="Text" />
+                                        <asp:ControlParameter ControlID="DropDownList2" Name="idTrimestre" PropertyName="SelectedValue" />
+                                    </SelectParameters>
+                                    <UpdateParameters>
+                                        <asp:Parameter Name="evaluacion1" />
+                                        <asp:Parameter Name="evaluacion2" />
+                                        <asp:Parameter Name="evaluacion3" />
+                                        <asp:Parameter Name="evaluacion4" />
+                                        <asp:Parameter Name="idEvaluaciones" />
+                                    </UpdateParameters>
+                                </asp:SqlDataSource>
+
                                 
 
-                                <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT Evaluaciones.idEvaluaciones, Alumnos.apellido, Alumnos.nombre, Evaluaciones.evaluacion1, Evaluaciones.evaluacion2, Evaluaciones.evaluacion3 FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)" UpdateCommand="UPDATE Evaluaciones SET evaluacion1 = @evaluacion1, evaluacion2 = @evaluacion2, evaluacion3 = @evaluacion3 WHERE (idEvaluaciones = @idEvaluaciones)" OnSelecting="SqlDataSource1_Selecting">
+                                <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT Evaluaciones.idEvaluaciones,Alumnos.apellido as Apellido,Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluacion1', Evaluaciones.evaluacion2 as 'Evaluacion2', Evaluaciones.evaluacion3 as 'Evaluacion3' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)" UpdateCommand="UPDATE Evaluaciones SET evaluacion1 = @evaluacion1, evaluacion2 = @evaluacion2, evaluacion3 = @evaluacion3 WHERE (idEvaluaciones = @idEvaluaciones)">
                                     <SelectParameters>
-                                        <asp:ControlParameter ControlID="txtMateriaSeleccionada" Name="idMateria" PropertyName="Text" />
+                                        <asp:ControlParameter ControlID="DropDownList1" Name="idMateria" PropertyName="SelectedValue" />
                                         <asp:ControlParameter ControlID="txtProfesorSeleccionado" Name="idProfesores" PropertyName="Text" />
-                                        <asp:ControlParameter ControlID="txtTrimestreSeleccionado" Name="idTrimestre" PropertyName="Text" />
+                                        <asp:ControlParameter ControlID="DropDownList2" Name="idTrimestre" PropertyName="SelectedValue" />
                                     </SelectParameters>
                                     <UpdateParameters>
                                         <asp:Parameter Name="evaluacion1" />

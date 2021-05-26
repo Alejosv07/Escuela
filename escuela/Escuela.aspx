@@ -28,6 +28,7 @@
             <div class="menu">
                 <a href="Escuela.aspx" class="d-block p-3 text-primary"><i class="fas fa-school mr-2 lead"></i> Escuela</a>
                 <a href="MiInfoAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-user mr-2 lead"></i> Mi información</a>
+                <a href="CalificarAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-database mr-2 lead"></i> Calificar</a>
                 <a href="IndexAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-user mr-2 lead"></i> Profesores</a>
                 <a href="EstudianteAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-user mr-2 lead"></i> Estudiantes</a>
                 <a href="RespaldoAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-database mr-2 lead"></i> Respaldo</a>
@@ -52,7 +53,7 @@
                                     <a class="dropdown-item" href="Escuela.aspx"><i class="fas fa-school mr-2 lead"></i> Escuela</a>
                                     <a class="dropdown-item" href="MiInfoAdmi.aspx"><i class="fas fa-user mr-2 lead"></i> Mi información</a>
                                     <a class="dropdown-item" href="IndexAdmi.aspx"><i class="fas fa-user mr-2 lead"></i> Profesores</a>
-                                    <a class="dropdown-item" href="EstudianteAdmi.aspx"><i class="fas fa-user mr-2 lead"></i> Estudiantes</a>
+                                    <a class="dropdown-item" href="CalificarAdmi.aspx"><i class="fas fa-database mr-2 lead"></i> Calificar</a><a class="dropdown-item" href="EstudianteAdmi.aspx"><i class="fas fa-user mr-2 lead"></i> Estudiantes</a>
                                     <a class="dropdown-item" href="RespaldoAdmi.aspx"><i class="fas fa-database mr-2 lead"></i> Respaldo</a>
                                     <div class="dropdown-divider"></div>
                                     <asp:Button ID="btnSalir" runat="server" Text="Salir" OnClick="btnSalir_Click" CssClass="border-0 bg-white dropdown-item" />                                   
@@ -106,8 +107,8 @@
                                                   <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CellPadding="4" DataSourceID="SqlDataSource1" ForeColor="#333333" GridLines="None" Width="100%" AllowSorting="True" CssClass="py-3">
                                                       <AlternatingRowStyle BackColor="White" />
                                                       <Columns>
-                                                          <asp:BoundField DataField="nombre" HeaderText="nombre" SortExpression="nombre" />
-                                                          <asp:BoundField DataField="seccion" HeaderText="seccion" SortExpression="seccion" />
+                                                          <asp:BoundField DataField="nombre" HeaderText="Grado" SortExpression="nombre" />
+                                                          <asp:BoundField DataField="seccion" HeaderText="Seccion" SortExpression="seccion" />
                                                       </Columns>
                                                       <EditRowStyle BackColor="#2461BF" />
                                                       <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
@@ -140,7 +141,7 @@
                                               <div class="col">
                                                   <asp:GridView ID="GridView2" runat="server" AutoGenerateColumns="False" CellPadding="4" DataSourceID="SqlDataSource2" ForeColor="#333333" GridLines="None" Width="100%" AllowSorting="True" CssClass="py-3">
                                                       <Columns>
-                                                          <asp:BoundField DataField="materia" HeaderText="materia" SortExpression="materia" />
+                                                          <asp:BoundField DataField="materia" HeaderText="Materia" SortExpression="materia" />
                                                       </Columns>
                                                       <EditRowStyle BackColor="#2461BF" />
                                                       <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />

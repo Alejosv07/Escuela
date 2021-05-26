@@ -33,10 +33,19 @@ namespace escuela.Clases
             SqlConnection con = this.conexion();
             SqlCommand cmd = con.CreateCommand();
             cmd.CommandType = CommandType.Text;
-            cmd.CommandText = "EXEC dbo.ingresarAlumno @nombre = '"+ t.Nombre + "',@apellido = " +
-                "'"+t.Apellido+"',@carnet = '"+t.Carnet+"',@idGrado = "+t.Grado+"," +
-                "@responsableNombre = '"+t.ResponsableNombre+"',@responsableApellido = '"+t.ResponsableApellido+"'," +
-                "@email = '"+t.Email+"',@usuario = '"+t.Usuario+"',@contra = '"+t.Contra+"';";
+            if (t.Grado <= 18)
+            {
+                cmd.CommandText = "EXEC dbo.ingresarAlumno @nombre = '" + t.Nombre + "',@apellido = " +
+                    "'" + t.Apellido + "',@carnet = '" + t.Carnet + "',@idGrado = " + t.Grado + "," +
+                    "@responsableNombre = '" + t.ResponsableNombre + "',@responsableApellido = '" + t.ResponsableApellido + "'," +
+                    "@email = '" + t.Email + "',@usuario = '" + t.Usuario + "',@contra = '" + t.Contra + "';";
+            }
+            else { 
+                cmd.CommandText = "EXEC dbo.ingresarAlumnoBachiller @nombre = '" + t.Nombre + "',@apellido = " +
+                    "'" + t.Apellido + "',@carnet = '" + t.Carnet + "',@idGrado = " + t.Grado + "," +
+                    "@responsableNombre = '" + t.ResponsableNombre + "',@responsableApellido = '" + t.ResponsableApellido + "'," +
+                    "@email = '" + t.Email + "',@usuario = '" + t.Usuario + "',@contra = '" + t.Contra + "';";
+            }
             cmd.ExecuteNonQuery();
             con.Close();
         }

@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using escuela.Clases;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.draw;
 
 namespace escuela
 {
@@ -34,6 +35,7 @@ namespace escuela
             this.evaluaciones.IdAlumno = this.estudiante.IdAlumno;
             if (!IsPostBack)
             {
+                this.lbAlumnoSeleccionado.Text = Convert.ToString(this.estudiante.IdAlumno);
                 Session["Periodo"] = 1;
                 this.cargarTablaPrincipal(1);
                 SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
@@ -52,13 +54,6 @@ namespace escuela
                 dr.Close();
                 con.Close();
             }
-            System.Diagnostics.Debug.WriteLine("ID: estudiante");
-            System.Diagnostics.Debug.WriteLine(estudiante.IdAlumno);
-            System.Diagnostics.Debug.WriteLine("ID: trimeste");
-            System.Diagnostics.Debug.WriteLine((int)Session["Periodo"]);
-            System.Diagnostics.Debug.WriteLine("ID: grado");
-            System.Diagnostics.Debug.WriteLine(estudiante.Grado);
-
             this.lbActu.Text = "Ultima actualización " + DateTime.Now.ToString();
             this.navbarDropdown.InnerText = estudiante.Nombre + " " + estudiante.Apellido;
         }
@@ -119,31 +114,95 @@ namespace escuela
         protected void btnPDF_Click(object sender, EventArgs e)
         {
             DataTable dt = new DataTable();
-            Document document = new Document();
+            Document document = new Document(iTextSharp.text.PageSize.LETTER, 30f, 20f, 130f, 40f);
             PdfWriter writer = PdfWriter.GetInstance(document, HttpContext.Current.Response.OutputStream);
+            string grado = "";
+            string seccion = "";
             int trimes = (int)Session["Periodo"];
             dt = dtAlumno();
             if (dt.Rows.Count > 0)
             {
+                if (trimes <= 4)
+                {
+                    writer.PageEvent = new HeaderFooterPDF("Estudiante", "Periodo " + trimes, "" + DateTime.Now.Year);
+                }
+                else
+                {
+                    writer.PageEvent = new HeaderFooterPDF("Estudiante", "Notas finales", "" + DateTime.Now.Year);
+                }
                 document.Open();
-                BaseFont baseFont = BaseFont.CreateFont(BaseFont.TIMES_ROMAN,BaseFont.CP1252,BaseFont.NOT_EMBEDDED);
-                iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(Server.MapPath("assets/img/Logo.png"));
-                document.Add(logo);
-                Font fontTitle = new Font(baseFont,16,1);
-                Font fontSubTitle = new Font(baseFont,14,1);
-                Paragraph p = new Paragraph();
-                p.Alignment = Element.ALIGN_LEFT;
-                Paragraph h2 = new Paragraph();
-                h2.Alignment = Element.ALIGN_CENTER;
-                p.Add(new Chunk("Colegio Santa Ana", fontTitle));
-                document.Add(p);
-                document.Add(new Chunk("\n"));
-                
-                Font fontEscuela = FontFactory.GetFont(FontFactory.TIMES, 12);
-                Paragraph para = new Paragraph();
-                para.Alignment = Element.ALIGN_LEFT;
-                para.Add(new Chunk("Estudiante: " + this.estudiante.Nombre+" "+this.estudiante.Apellido, fontEscuela));
-                para.Add(new Chunk("\nCarnet: " + this.estudiante.Carnet, fontEscuela));
+
+                //Letra personalizada
+                string nameFont = HttpContext.Current.Server.MapPath("assets/fonts/ArialCE.ttf");
+
+                BaseFont baseFont = BaseFont.CreateFont(nameFont, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                Font fontText = new Font(baseFont, 10, 0, BaseColor.BLACK);
+                Font fontTextBold = new Font(baseFont, 10, 1, BaseColor.BLACK);
+                Font fontTextUnderline = new Font(baseFont, 10, 4, BaseColor.BLACK);
+
+                //Table detalles
+                PdfPTable tbDetalles = new PdfPTable(6);
+                tbDetalles.WidthPercentage = 100f;
+                tbDetalles.TotalWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin;
+                tbDetalles.DefaultCell.Border = 0;
+
+                //Titulo Estudiante
+                PdfPCell _cell = new PdfPCell(new Paragraph("Estudiante: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Detalle titulo Estudiante
+                _cell = new PdfPCell(new Paragraph(this.estudiante.Nombre + " " + this.estudiante.Apellido, fontText));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+
+                //Titulo Carnet
+                _cell = new PdfPCell(new Paragraph("Carnet: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Detalle titulo Carnet
+                _cell = new PdfPCell(new Paragraph(this.estudiante.Carnet,fontText));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+
+                //Titulo Grado
+                _cell = new PdfPCell(new Paragraph("Cursando: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Abrimos conexion para saber el grado
                 SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
                 con.Open();
                 SqlCommand cmd = con.CreateCommand();
@@ -152,46 +211,114 @@ namespace escuela
                 cmd.Parameters.AddWithValue("@idGrado", this.estudiante.Grado);
                 cmd.ExecuteNonQuery();
                 SqlDataReader dr = cmd.ExecuteReader();
-                
+
                 if (dr.Read())
                 {
-                    para.Add(new Chunk("\nCursando: " + dr[0].ToString(), fontEscuela));
+                    grado = dr[0].ToString();
+                    //Detalle titulo Grado
+                    _cell = new PdfPCell(new Paragraph(grado, fontText));
+                    _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                    _cell.Border = 0;
+                    tbDetalles.AddCell(_cell);
                 }
                 dr.Close();
                 con.Close();
-                para.Add(new Chunk("\nFecha de impresión: " + DateTime.Now.ToShortDateString(), fontEscuela));
-                document.Add(new Chunk("\n"));
-                document.Add(new Chunk("\n"));
-                if (trimes < 4)
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Titulo Seccion
+                _cell = new PdfPCell(new Paragraph("Seccion: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Abrimos conexion para saber la Seccion
+                con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
+                con.Open();
+                cmd = con.CreateCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT seccion from Grado where idGrado = @idGrado";
+                cmd.Parameters.AddWithValue("@idGrado", this.estudiante.Grado);
+                cmd.ExecuteNonQuery();
+                dr = cmd.ExecuteReader();
+
+                if (dr.Read())
                 {
-                    h2.Add(new Chunk("\nPeriodo " + trimes, fontSubTitle));
+                    seccion = dr[0].ToString();
+                    //Detalle titulo Seccion
+                    _cell = new PdfPCell(new Paragraph(seccion, fontText));
+                    _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                    _cell.Border = 0;
+                    tbDetalles.AddCell(_cell);
                 }
-                else
-                {
-                    h2.Add(new Chunk("\nNotas finales", fontSubTitle));
-                }
-                h2.Add(new Chunk("\n", fontSubTitle));
-                document.Add(para);
-                document.Add(h2);
-                Font font9 = FontFactory.GetFont(FontFactory.TIMES, 12);  
+                dr.Close();
+                con.Close();
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Titulo Responsable
+                _cell = new PdfPCell(new Paragraph("Responsable: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Detalle titulo Responsable
+                _cell = new PdfPCell(new Paragraph(this.estudiante.ResponsableNombre+" "+this.estudiante.ResponsableApellido, fontText));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                document.Add(tbDetalles);
+
+                //Linea
+                Chunk linea = new Chunk(new LineSeparator(1f, 100f, BaseColor.BLACK, Element.ALIGN_CENTER, -1));
+                document.Add(new Paragraph(linea));
+                document.Add(new Chunk("\n"));
+                document.Add(new Chunk("Calificaciones: ", fontTextUnderline));
 
                 PdfPTable table = new PdfPTable(dt.Columns.Count);
 
-                document.Add(new Chunk("\n"));
+                table.WidthPercentage = 100f;
 
-                float[] widths = new float[dt.Columns.Count];
-                for (int i = 0; i < dt.Columns.Count; i++)
-                    widths[i] = 4f;
-
-                table.SetWidths(widths);
-                table.WidthPercentage = 90;
-
-                PdfPCell cell = new PdfPCell(new Phrase("columns"));
-                cell.Colspan = dt.Columns.Count;
+                _cell = new PdfPCell();
 
                 foreach (DataColumn c in dt.Columns)
                 {
-                    table.AddCell(new Phrase(c.ColumnName, font9));
+                    _cell = new PdfPCell(new Paragraph(new Chunk(c.ColumnName, fontText)));
+                    _cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    table.AddCell(_cell);
                 }
 
                 foreach (DataRow r in dt.Rows)
@@ -200,25 +327,27 @@ namespace escuela
                     {
                         for (int h = 0; h < dt.Columns.Count; h++)
                         {
-                            table.AddCell(new Phrase(r[h].ToString(), font9));
+                            _cell = new PdfPCell(new Paragraph(new Chunk(r[h].ToString(), fontText)));
+                            _cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                            table.AddCell(_cell);
                         }
                     }
                 }
                 document.Add(table);
                 document.Close();
                 Response.ContentType = "application/pdf";
-                if (trimes < 4)
-                {
-                    Response.AddHeader("content-disposition", "attachment;filename=Calificaciones_Periodo " + trimes + " "+this.estudiante.Carnet+".pdf");
-                }
-                else { 
-                    Response.AddHeader("content-disposition", "attachment;filename=Calificaciones_Finales " + this.estudiante.Carnet + ".pdf");
-                }
+                Response.AddHeader("content-disposition", "attachment;filename=CalificacionesAlumno" + this.estudiante.Apellido+" "+this.estudiante.Nombre+ ".pdf");
                 HttpContext.Current.Response.Write(document);
                 Response.Flush();
                 Response.End();
             }
 
+        }
+
+        protected void DropDownList1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Session["Periodo"] = Convert.ToInt32(this.DropDownList1.SelectedItem.Text);
+            cargarTablaPrincipal(Convert.ToInt32(this.DropDownList1.SelectedItem.Text));
         }
     }
 }

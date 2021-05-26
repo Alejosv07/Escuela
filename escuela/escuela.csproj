@@ -101,10 +101,12 @@
     <Content Include="assets\fonts\fa-solid-900.svg" />
     <Content Include="assets\fonts\fontawesome-all.min.css" />
     <Content Include="assets\img\Logo2.png" />
+    <Content Include="assets\img\LogoOriginal.png" />
     <Content Include="assets\img\Logo.png" />
     <Content Include="assets\js\cambios de pantalla.js" />
     <Content Include="assets\js\jquery.min.js" />
     <Content Include="assets\js\login.js" />
+    <Content Include="CalificarAdmi.aspx" />
     <Content Include="Escuela.aspx" />
     <Content Include="EstudianteAdmi.aspx" />
     <Content Include="IndexAdmi.aspx" />
@@ -122,6 +124,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CalificarAdmi.aspx.cs">
+      <DependentUpon>CalificarAdmi.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CalificarAdmi.aspx.designer.cs">
+      <DependentUpon>CalificarAdmi.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Clases\AlumnoTrimestre.cs" />
     <Compile Include="Clases\AlumnoTrimestreImpt.cs" />
     <Compile Include="Clases\CodeGenerate.cs" />
@@ -131,6 +140,7 @@
     <Compile Include="Clases\EvaluacionesImpt.cs" />
     <Compile Include="Clases\Grado.cs" />
     <Compile Include="Clases\GradoImpt.cs" />
+    <Compile Include="Clases\HeaderFooterPDF.cs" />
     <Compile Include="Clases\Materia.cs" />
     <Compile Include="Clases\MateriaImpt.cs" />
     <Compile Include="Clases\Profesores.cs" />
@@ -260,6 +270,8 @@
     <Content Include="assets\fonts\fa-solid-900.woff" />
     <Content Include="assets\fonts\fa-solid-900.woff2" />
     <Content Include="assets\img\LogoDiseñoPH.psd" />
+    <Content Include="assets\fonts\ArialCE.ttf" />
+    <Content Include="assets\fonts\ArialCEBold.ttf" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

@@ -83,19 +83,16 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="dropdown py-3">
-                                    <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Periodos
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <asp:Button ID="btnPeriodo1" runat="server" Text="Periodo 1" CssClass="border-0 bg-white dropdown-item" OnClick="btnP1_Click"/>                                   
-                                        <div class="dropdown-divider"></div>
-                                        <asp:Button ID="btnPeriodo2" runat="server" Text="Periodo 2" CssClass="border-0 bg-white dropdown-item" OnClick="btnP2_Click"/>                                   
-                                        <div class="dropdown-divider"></div>
-                                        <asp:Button ID="btnPeriodo3" runat="server" Text="Periodo 3" CssClass="border-0 bg-white dropdown-item" OnClick="btnP3_Click"/>                                   
-                                        <div class="dropdown-divider"></div>
-                                        <asp:Button ID="btnFperiodo" runat="server" Text="Promedios Finales" CssClass="border-0 bg-white dropdown-item" OnClick="btnPF_Click"/>                                   
-                                    </div>
+                                <div class="bg-success rounded my-4" style="width: 45%">
+                                    <asp:Label Text="Trimestre: " runat="server" CssClass="text-white px-2"/>
+                                    <asp:DropDownList ID="DropDownList1" runat="server" DataSourceID="SqlDataSource1" DataTextField="Trimestre" DataValueField="Trimestre" CssClass="btn btn-success dropdown-toggle" AutoPostBack="True" OnSelectedIndexChanged="DropDownList1_SelectedIndexChanged">
+                                    </asp:DropDownList>
+                                    <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="select Evaluaciones.idTrimestre as 'Trimestre' from Evaluaciones inner join Materia on Materia.idMateria = Evaluaciones.idMateria where Evaluaciones.idAlumno = @idAlumno group by Evaluaciones.idTrimestre;">
+                                        <SelectParameters>
+                                            <asp:ControlParameter ControlID="lbAlumnoSeleccionado" Name="idAlumno" PropertyName="Text" />
+                                        </SelectParameters>
+                                    </asp:SqlDataSource>
+                                    <asp:Label ID="lbAlumnoSeleccionado" runat="server" Visible="False"></asp:Label>
                                 </div>
                                 
                                 <asp:GridView ID="grid1" runat="server" CssClass="table" CellPadding="4" ForeColor="#333333" GridLines="None">

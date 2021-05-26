@@ -30,6 +30,7 @@
                 <a href="Escuela.aspx" class="d-block p-3 text-muted"><i class="fas fa-school mr-2 lead"></i> Escuela</a>
                 <a href="MiInfoAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-user mr-2 lead"></i> Mi información</a>
                 <a href="IndexAdmi.aspx" class="d-block p-3 text-primary"><i class="fas fa-user mr-2 lead"></i> Profesores</a>
+                <a href="CalificarAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-database mr-2 lead"></i> Calificar</a>
                 <a href="EstudianteAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-user mr-2 lead"></i> Estudiantes</a>
                 <a href="RespaldoAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-database mr-2 lead"></i> Respaldo</a>
             </div>
@@ -53,6 +54,7 @@
                                     <a class="dropdown-item" href="Escuela.aspx"><i class="fas fa-school mr-2 lead"></i> Escuela</a>
                                     <a class="dropdown-item" href="MiInfoAdmi.aspx"><i class="fas fa-user lead"></i> Mi información</a>
                                     <a class="dropdown-item" href="IndexAdmi.aspx"><i class="fas fa-user mr-2 lead"></i> Profesores</a>
+                                    <a class="dropdown-item" href="CalificarAdmi.aspx"><i class="fas fa-database mr-2 lead"></i> Calificar</a>
                                     <a class="dropdown-item" href="EstudianteAdmi.aspx"><i class="fas fa-user mr-2 lead"></i> Estudiantes</a>
                                     <a class="dropdown-item" href="RespaldoAdmi.aspx"><i class="fas fa-database mr-2 lead"></i> Respaldo</a>
                                     <div class="dropdown-divider"></div>
@@ -81,7 +83,7 @@
                 <section>
                     <div class="container">
                         <div class="row">
-                            <div class="col table-wrapper-scroll-y my-custom-scrollbar bg-light">
+                            <div class="col table-wrapper-scroll-y my-custom-scrollbar bg-light" style="left: 0px; top: 0px; height: 599px">
 
                                 <div class="shadow my-2 py-4 px-4">
                                      <div class="row my-2">
@@ -141,22 +143,29 @@ order by idGrado;"></asp:SqlDataSource>
                                         <AlternatingRowStyle BackColor="White" />
                                         <Columns>
                                             <asp:BoundField DataField="idProfesores" HeaderText="idProfesores" InsertVisible="False" ReadOnly="True" SortExpression="idProfesores" />
-                                            <asp:BoundField DataField="nombre" HeaderText="nombre" SortExpression="nombre" />
-                                            <asp:BoundField DataField="apellido" HeaderText="apellido" SortExpression="apellido" />
-                                            <asp:TemplateField HeaderText="idGrado" SortExpression="idGrado">
+                                            <asp:BoundField DataField="nombre" HeaderText="Nombre" SortExpression="nombre" />
+                                            <asp:BoundField DataField="apellido" HeaderText="Apellido" SortExpression="apellido" />
+                                            <asp:TemplateField HeaderText="Grado" SortExpression="idGrado">
                                                 <EditItemTemplate>
                                                     <asp:DropDownList ID="DropDownList1" runat="server" DataSourceID="SqlDataSource4" DataTextField="Grado" DataValueField="idGrado" SelectedValue='<%# Bind("idGrado") %>'>
                                                     </asp:DropDownList>
                                                     <asp:SqlDataSource ID="SqlDataSource4" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="select (nombre+' '+seccion) as Grado,idGrado from Grado"></asp:SqlDataSource>
                                                 </EditItemTemplate>
                                                 <ItemTemplate>
-                                                    <asp:Label ID="Label1" runat="server" Text='<%# Bind("idGrado") %>'></asp:Label>
+                                                    <asp:Label ID="lbGrado" runat="server" Text='<%# Bind("idGrado") %>' Visible="False"></asp:Label>
+                                                    <asp:DropDownList ID="DropDownList4" runat="server" DataSourceID="SqlDataSource12" DataTextField="Column1" DataValueField="Column1">
+                                                    </asp:DropDownList>
+                                                    <asp:SqlDataSource ID="SqlDataSource12" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="select top 1(nombre+' '+seccion) from Grado where idGrado = @idGrado">
+                                                        <SelectParameters>
+                                                            <asp:ControlParameter ControlID="lbGrado" Name="idGrado" PropertyName="Text" />
+                                                        </SelectParameters>
+                                                    </asp:SqlDataSource>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
-                                            <asp:BoundField DataField="email" HeaderText="email" SortExpression="email" />
-                                            <asp:BoundField DataField="usuario" HeaderText="usuario" SortExpression="usuario" />
-                                            <asp:BoundField DataField="contra" HeaderText="contra" SortExpression="contra" />
-                                            <asp:TemplateField HeaderText="nivel" SortExpression="nivel">
+                                            <asp:BoundField DataField="email" HeaderText="Email" SortExpression="email" />
+                                            <asp:BoundField DataField="usuario" HeaderText="Usuario" SortExpression="usuario" />
+                                            <asp:BoundField DataField="contra" HeaderText="Contrasena" SortExpression="contra" />
+                                            <asp:TemplateField HeaderText="Nivel" SortExpression="nivel">
                                                 <EditItemTemplate>
                                                     <asp:DropDownList ID="DropDownList2" runat="server" SelectedValue='<%# Bind("nivel") %>' Width="118px">
                                                         <asp:ListItem Value="0">Profesor</asp:ListItem>
@@ -164,7 +173,14 @@ order by idGrado;"></asp:SqlDataSource>
                                                     </asp:DropDownList>
                                                 </EditItemTemplate>
                                                 <ItemTemplate>
-                                                    <asp:Label ID="Label2" runat="server" Text='<%# Bind("nivel") %>'></asp:Label>
+                                                    <asp:Label ID="lbNivel" runat="server" Text='<%# Bind("nivel") %>' Visible="False"></asp:Label>
+                                                    <asp:DropDownList ID="DropDownList5" runat="server" DataSourceID="SqlDataSource13" DataTextField="Nivel" DataValueField="Nivel">
+                                                    </asp:DropDownList>
+                                                    <asp:SqlDataSource ID="SqlDataSource13" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT top 1 CASE WHEN nivel = 1 THEN 'Administrador' ELSE 'Profesor' END AS Nivel from Profesores where nivel = @nivel">
+                                                        <SelectParameters>
+                                                            <asp:ControlParameter ControlID="lbNivel" Name="nivel" PropertyName="Text" />
+                                                        </SelectParameters>
+                                                    </asp:SqlDataSource>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                         </Columns>

@@ -3,6 +3,8 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -51,40 +53,159 @@ namespace escuela
 
         protected void btnImprimir_Click(object sender, EventArgs e)
         {
-            Document document = new Document();
-            PdfWriter pdfWriter = PdfWriter.GetInstance(document, HttpContext.Current.Response.OutputStream);
+            Document document = new Document(iTextSharp.text.PageSize.LETTER, 30f, 20f, 130f, 40f);
+            PdfWriter writer = PdfWriter.GetInstance(document, HttpContext.Current.Response.OutputStream);
+            string grado = "";
+            string seccion = "";
 
+            writer.PageEvent = new HeaderFooterPDF("Docentes", "Datos personales", "" + DateTime.Now.Year);
             //Abrimos documento
             document.Open();
 
-            BaseFont baseFont = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-            iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(Server.MapPath("assets/img/Logo.png"));
-            document.Add(logo);
+            //Letra personalizada
+            string nameFont = HttpContext.Current.Server.MapPath("assets/fonts/ArialCE.ttf");
 
-            Font fontTitle = new Font(baseFont, 16, 1);
-            Font fontSubTitle = new Font(baseFont, 14, 1);
-            Paragraph p = new Paragraph();
-            p.Alignment = Element.ALIGN_LEFT;
-            Paragraph h2 = new Paragraph();
-            h2.Alignment = Element.ALIGN_CENTER;
-            p.Add(new Chunk("Colegio Santa Ana", fontTitle));
-            document.Add(p);
-            document.Add(new Chunk("\n"));
-            Font fontEscuela = FontFactory.GetFont(FontFactory.TIMES, 12);
-            Paragraph para = new Paragraph();
-            para.Alignment = Element.ALIGN_LEFT;
-            h2.Add(new Paragraph(10, "Datos personales: " + this.profesores.Nombre.Trim(), fontSubTitle));
-            document.Add(h2);
-            para.Add(new Paragraph(10, "\n "));
-            para.Add(new Paragraph(10, "\nNombres: " + this.profesores.Nombre.Trim(), fontEscuela));
-            para.Add(new Paragraph(10, "\nApellido: " + this.profesores.Apellido.Trim(), fontEscuela));
-            para.Add(new Paragraph(10, "\nEmail: " + this.profesores.Email.Trim(), fontEscuela));
-            para.Add(new Paragraph(10, "\nUsuario: " + this.profesores.Usuario.Trim(), fontEscuela));
-            para.Add(new Paragraph(10, "\nContraseña: " + this.profesores.Contra.Trim(), fontEscuela));
-            para.Add(new Paragraph(10, "\nFecha de impresión: " + DateTime.Now.ToShortDateString(), fontEscuela));
-            document.Add(para);
+            BaseFont baseFont = BaseFont.CreateFont(nameFont, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+            Font fontText = new Font(baseFont, 10, 0, BaseColor.BLACK);
+            Font fontTextBold = new Font(baseFont, 10, 1, BaseColor.BLACK);
+            Font fontTextUnderline = new Font(baseFont, 10, 4, BaseColor.BLACK);
+
+            //Table detalles
+            PdfPTable tbDetalles = new PdfPTable(6);
+            tbDetalles.WidthPercentage = 100f;
+            tbDetalles.TotalWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin;
+            tbDetalles.DefaultCell.Border = 0;
+
+            //Titulo Docente
+            PdfPCell _cell = new PdfPCell(new Paragraph("Docente: ", fontTextBold));
+            _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+            _cell.Border = 0;
+            tbDetalles.AddCell(_cell);
+
+            //Detalle titulo Docente
+            _cell = new PdfPCell(new Paragraph(this.profesores.Nombre + " " + this.profesores.Apellido, fontText));
+            _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+            _cell.Border = 0;
+            tbDetalles.AddCell(_cell);
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            //Titulo Impartiendo
+            _cell = new PdfPCell(new Paragraph("Impartiendo: ", fontTextBold));
+            _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+            _cell.Border = 0;
+            tbDetalles.AddCell(_cell);
+
+            //Abrimos conexion para saber el grado
+            SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
+            con.Open();
+            SqlCommand cmd = con.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "SELECT nombre from Grado where idGrado = @idGrado";
+            cmd.Parameters.AddWithValue("@idGrado", this.profesores.IdGrado);
+            cmd.ExecuteNonQuery();
+            SqlDataReader dr = cmd.ExecuteReader();
+
+            if (dr.Read())
+            {
+                grado = dr[0].ToString();
+                //Detalle titulo Impartiendo
+                _cell = new PdfPCell(new Paragraph(grado, fontText));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+            }
+            dr.Close();
+            con.Close();
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            //Titulo Seccion
+            _cell = new PdfPCell(new Paragraph("Seccion: ", fontTextBold));
+            _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+            _cell.Border = 0;
+            tbDetalles.AddCell(_cell);
+
+            //Abrimos conexion para saber la Seccion
+            con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
+            con.Open();
+            cmd = con.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "SELECT seccion from Grado where idGrado = @idGrado";
+            cmd.Parameters.AddWithValue("@idGrado", this.profesores.IdGrado);
+            cmd.ExecuteNonQuery();
+            dr = cmd.ExecuteReader();
+
+            if (dr.Read())
+            {
+                seccion = dr[0].ToString();
+                //Detalle titulo Seccion
+                _cell = new PdfPCell(new Paragraph(seccion, fontText));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+            }
+            dr.Close();
+            con.Close();
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            //Titulo Email
+            _cell = new PdfPCell(new Paragraph("Email: ", fontTextBold));
+            _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+            _cell.Border = 0;
+            tbDetalles.AddCell(_cell);
+
+            //Detalle titulo Email
+            _cell = new PdfPCell(new Paragraph(this.profesores.Email, fontText));
+            _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+            _cell.Border = 0;
+            tbDetalles.AddCell(_cell);
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            //Celda vacia
+            tbDetalles.AddCell(new Paragraph());
+
+            document.Add(tbDetalles);
             document.Close();
-
             Response.ContentType = "application/pdf";
             Response.AddHeader("content-disposition", "attachment;filename=DatosPersonales.pdf");
             HttpContext.Current.Response.Write(document);

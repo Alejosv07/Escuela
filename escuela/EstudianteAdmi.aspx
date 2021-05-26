@@ -44,6 +44,7 @@
                 <a href="Escuela.aspx" class="d-block p-3 text-muted"><i class="fas fa-school mr-2 lead"></i> Escuela</a>
                 <a href="MiInfoAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-user mr-2 lead"></i> Mi información</a>
                 <a href="IndexAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-user mr-2 lead"></i> Profesores</a>
+                <a href="CalificarAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-database mr-2 lead"></i> Calificar</a>
                 <a href="EstudianteAdmi.aspx" class="d-block p-3 text-primary"><i class="fas fa-user mr-2 lead""></i> Estudiantes</a>
                 <a href="RespaldoAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-database mr-2 lead"></i> Respaldo</a>
             </div>
@@ -159,25 +160,43 @@
                                                     <AlternatingRowStyle BackColor="White" />
                                                     <Columns>
                                                         <asp:BoundField DataField="idAlumno" HeaderText="idAlumno" InsertVisible="False" ReadOnly="True" SortExpression="idAlumno" />
-                                                        <asp:BoundField DataField="nombre" HeaderText="nombre" SortExpression="nombre" />
-                                                        <asp:BoundField DataField="apellido" HeaderText="apellido" SortExpression="apellido" />
-                                                        <asp:BoundField DataField="carnet" HeaderText="carnet" SortExpression="carnet" />
-                                                        <asp:BoundField DataField="idGrado" HeaderText="idGrado" SortExpression="idGrado" ReadOnly="true" />
-                                                        <%--<asp:TemplateField HeaderText="idGrado" SortExpression="idGrado" ReadOnly="True">
+                                                        <asp:BoundField DataField="nombre" HeaderText="Nombre" 
+                                                            SortExpression="nombre" />
+                                                        <asp:BoundField DataField="apellido" HeaderText="Apellido" 
+                                                            SortExpression="apellido" />
+                                                        <asp:BoundField DataField="carnet" HeaderText="Carnet" 
+                                                            SortExpression="carnet" />
+                                                        <asp:TemplateField HeaderText="Grado" SortExpression="idGrado">
                                                             <EditItemTemplate>
-                                                                <asp:DropDownList ID="DropDownList1" runat="server" DataSourceID="SqlDataSource4" DataTextField="Grado" DataValueField="idGrado" SelectedValue='<%# Bind("idGrado") %>'>
+                                                                <asp:DropDownList ID="DropDownList4" runat="server" 
+                                                                    DataSourceID="SqlDataSource1" DataTextField="Grado" 
+                                                                    DataValueField="idGrado" Enabled="False">
                                                                 </asp:DropDownList>
-                                                                <asp:SqlDataSource ID="SqlDataSource4" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="select (Grado.nombre+' '+Grado.seccion) as Grado,Grado.idGrado from Grado inner join Profesores on Profesores.idGrado = Grado.idGrado where Profesores.nivel &lt;&gt; 1 ;"></asp:SqlDataSource>
                                                             </EditItemTemplate>
                                                             <ItemTemplate>
-                                                                <asp:Label ID="Label1" runat="server" Text='<%# Bind("idGrado") %>'></asp:Label>
+                                                                <asp:Label ID="lbGrado" runat="server" Text='<%# Bind("idGrado") %>' 
+                                                                    Visible="False"></asp:Label>
+                                                                <asp:DropDownList ID="DropDownList3" runat="server" 
+                                                                    DataSourceID="SqlDataSource14" DataTextField="Grado" DataValueField="Grado">
+                                                                </asp:DropDownList>
+                                                                <asp:SqlDataSource ID="SqlDataSource14" runat="server" 
+                                                                    ConnectionString="<%$ ConnectionStrings:ConnectionString %>" 
+                                                                    SelectCommand="select (nombre+' '+seccion) as 'Grado' from Grado where idGrado = @idGrado">
+                                                                    <SelectParameters>
+                                                                        <asp:ControlParameter ControlID="lbGrado" Name="idGrado" PropertyName="Text" />
+                                                                    </SelectParameters>
+                                                                </asp:SqlDataSource>
                                                             </ItemTemplate>
-                                                        </asp:TemplateField>--%>
-                                                        <asp:BoundField DataField="responsableNombre" HeaderText="responsableNombre" SortExpression="responsableNombre" />
-                                                        <asp:BoundField DataField="responsableApellido" HeaderText="responsableApellido" SortExpression="responsableApellido" />
-                                                        <asp:BoundField DataField="email" HeaderText="email" SortExpression="email" />
-                                                        <asp:BoundField DataField="usuario" HeaderText="usuario" SortExpression="usuario" />
-                                                        <asp:BoundField DataField="contra" HeaderText="contra" SortExpression="contra" />
+                                                        </asp:TemplateField>
+                                                        <asp:BoundField DataField="responsableNombre" HeaderText="Nombre responsable" 
+                                                            SortExpression="responsableNombre" />
+                                                        <asp:BoundField DataField="responsableApellido" 
+                                                            HeaderText="Apellido  responsable" SortExpression="responsableApellido" />
+                                                        <asp:BoundField DataField="email" HeaderText="Email" SortExpression="email" />
+                                                        <asp:BoundField DataField="usuario" HeaderText="Usuario" 
+                                                            SortExpression="usuario" />
+                                                        <asp:BoundField DataField="contra" HeaderText="Contrasena" 
+                                                            SortExpression="contra" />
                                                     </Columns>
                                                     <EditRowStyle BackColor="#2461BF" />
                                                     <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />

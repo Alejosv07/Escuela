@@ -1,6 +1,7 @@
 ﻿using escuela.Clases;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.draw;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -31,12 +32,12 @@ namespace escuela
             this.evaluaciones = new Evaluaciones();
             this.evaluacionesImpt = new EvaluacionesImpt();
             this.txtProfesorSeleccionado.Text = Convert.ToString(profesores.IdProfesores);
-            if (!IsPostBack)
+            if (this.profesores.IdGrado <= 18)
             {
-                this.txtMateriaSeleccionada.Text = "1";
-                this.txtMateriaShow.Text = "Lenguaje";
-                this.txtTrimestreSeleccionado.Text = "1";
-                this.txtTrimestreShow.Text = "Primer Trimestre";
+                this.GridView1.Columns[6].Visible = false;
+            }
+            if(!IsPostBack)
+            {
                 SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
                 con.Open();
                 SqlCommand cmd = con.CreateCommand();
@@ -45,7 +46,6 @@ namespace escuela
                 cmd.Parameters.AddWithValue("@idGrado", this.profesores.IdGrado);
                 cmd.ExecuteNonQuery();
                 SqlDataReader dr = cmd.ExecuteReader();
-
                 if (dr.Read())
                 { 
                     this.lbGrado.Text = "Grado impartido: "+dr[0].ToString();
@@ -54,6 +54,8 @@ namespace escuela
                 con.Close();
                 Session["Periodo"] = 1;
             }
+            this.GridView1.Columns[0].Visible = false;
+            this.txtProfesorSeleccionado.Text = this.profesores.IdProfesores.ToString().Trim();
             this.lbActu.Text = "Ultima actualización " + DateTime.Now.ToString();
             this.navbarDropdown.InnerText = profesores.Nombre + " " + profesores.Apellido;
         }
@@ -63,54 +65,10 @@ namespace escuela
             Session["Cuenta"] = null;
             Server.Transfer("Login.aspx");
         }
-        protected void btnP1_Click(object sender, EventArgs e)
-        {
-            this.txtMateriaSeleccionada.Text = "1";
-            this.txtMateriaShow.Text = "Lenguaje";
-        }
-        protected void btnP2_Click(object sender, EventArgs e)
-        {
-            this.txtMateriaSeleccionada.Text = "2";
-            this.txtMateriaShow.Text = "Sociales";
-        }
-        protected void btnP3_Click(object sender, EventArgs e)
-        {
-            this.txtMateriaSeleccionada.Text = "3";
-            this.txtMateriaShow.Text = "Matematica";
-        }
-        protected void btnP4_Click(object sender, EventArgs e)
-        {
-            this.txtMateriaSeleccionada.Text = "4";
-            this.txtMateriaShow.Text = "Ciencias";
-        }
 
-        protected void btnP5_Click(object sender, EventArgs e)
-        {
-            this.txtMateriaSeleccionada.Text = "5";
-            this.txtMateriaShow.Text = "Ingles";
-        }
-        protected void btnT1_Click(object sender, EventArgs e)
-        {
-            this.txtTrimestreSeleccionado.Text = "1";
-            Session["Periodo"] = 1;
-            this.txtTrimestreShow.Text = "Primer Trimestre";
-        }
-        protected void btnT2_Click(object sender, EventArgs e)
-        {
-            this.txtTrimestreSeleccionado.Text = "2";
-            Session["Periodo"] = 2;
-            this.txtTrimestreShow.Text = "Segundo Trimestre";
-        }
-        protected void btnT3_Click(object sender, EventArgs e)
-        {
-            this.txtTrimestreSeleccionado.Text = "3";
-            Session["Periodo"] = 3;
-            this.txtTrimestreShow.Text = "Tercer Trimestre";
-        }
         protected void btnTF_Click(object sender, EventArgs e)
         {
-            this.txtTrimestreSeleccionado.Text = "4";
-            Session["Periodo"] = 4;
+            Session["Periodo"] = 5;
             this.btnImprimirClick(sender,e);
         }
         
@@ -121,10 +79,16 @@ namespace escuela
             SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
             SqlCommand cmd = con.CreateCommand();
             cmd.CommandType = CommandType.Text;
-            cmd.CommandText = "SELECT Alumnos.apellido as 'Apellido', Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluación1(35%)', Evaluaciones.evaluacion2 as 'Evaluación2(35%)', Evaluaciones.evaluacion3 as 'Evaluación3(30%)',((Evaluaciones.evaluacion1*0.35)+(Evaluaciones.evaluacion2*0.35)+(Evaluaciones.evaluacion3*0.30)) as 'PromedioPeriodo' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)";
-            cmd.Parameters.AddWithValue("@idMateria", this.txtMateriaSeleccionada.Text);
+            if (this.profesores.IdGrado <= 18)
+            {
+                cmd.CommandText = "SELECT Alumnos.apellido as 'Apellido', Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluación1(35%)', Evaluaciones.evaluacion2 as 'Evaluación2(35%)', Evaluaciones.evaluacion3 as 'Evaluación3(30%)',((Evaluaciones.evaluacion1*0.35)+(Evaluaciones.evaluacion2*0.35)+(Evaluaciones.evaluacion3*0.30)) as 'PromedioPeriodo' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)";
+            }
+            else {
+                cmd.CommandText = "SELECT Alumnos.apellido as 'Apellido', Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluación1(25%)', Evaluaciones.evaluacion2 as 'Evaluación2(25%)', Evaluaciones.evaluacion3 as 'Evaluación3(25%)',Evaluaciones.evaluacion4 as 'Evaluación4(25%)',((Evaluaciones.evaluacion1*0.25)+(Evaluaciones.evaluacion2*0.25)+(Evaluaciones.evaluacion3*0.25)+(Evaluaciones.evaluacion4*0.25)) as 'PromedioPeriodo' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)";
+            }
+            cmd.Parameters.AddWithValue("@idMateria", this.DropDownList1.SelectedValue.ToString().Trim());
             cmd.Parameters.AddWithValue("@idProfesores", this.txtProfesorSeleccionado.Text);
-            cmd.Parameters.AddWithValue("@idTrimestre", this.txtTrimestreSeleccionado.Text);
+            cmd.Parameters.AddWithValue("@idTrimestre", this.DropDownList2.SelectedValue.ToString().Trim());
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.Fill(dt);
             da.Dispose();
@@ -136,8 +100,14 @@ namespace escuela
             SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
             SqlCommand cmd = con.CreateCommand();
             cmd.CommandType = CommandType.Text;
-            
-            cmd.CommandText = "EXEC dbo.NotasPorMateria @usuarioProfesor = "+ this.profesores.Usuario+", @materiaGrado = "+this.txtMateriaShow.Text+";";
+            if (this.profesores.IdGrado <= 18)
+            {
+                //Menores a bachillerato
+                cmd.CommandText = "EXEC dbo.NotasPorMateria @usuarioProfesor = "+ this.profesores.Usuario+", @materiaGrado = "+this.DropDownList1.SelectedItem.ToString().Trim()+";";
+            }
+            else { 
+                //Falta
+            }
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.Fill(dt);
             da.Dispose();
@@ -147,10 +117,12 @@ namespace escuela
         protected void btnImprimirClick(object sender, EventArgs e)
         {
             DataTable dt = new DataTable();
-            Document document = new Document();
+            Document document = new Document(iTextSharp.text.PageSize.LETTER,30f,20f,130f,40f);
             PdfWriter writer = PdfWriter.GetInstance(document, HttpContext.Current.Response.OutputStream);
             int trimes = (int)Session["Periodo"];
-            if (trimes < 4)
+            string grado = "";
+            string seccion = "";
+            if (trimes <= 4)
             {
                 dt = dtProfesor();
             }
@@ -159,26 +131,62 @@ namespace escuela
             }
             if (dt.Rows.Count > 0)
             {
+                //Diferenciamos el tipo de documento
+                if (trimes <= 4)
+                {
+                    writer.PageEvent = new HeaderFooterPDF("Docentes", "Periodo " + trimes, ""+DateTime.Now.Year);
+                }
+                else
+                {
+                    writer.PageEvent = new HeaderFooterPDF("Docentes", "Notas finales", ""+DateTime.Now.Year);
+                }
                 document.Open();
-                BaseFont baseFont = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-                
-                iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(Server.MapPath("assets/img/Logo.png"));
-                document.Add(logo);
-                Font fontTitle = new Font(baseFont, 16, 1);
-                Font fontSubTitle = new Font(baseFont, 14, 1);
-                Paragraph p = new Paragraph();
-                p.Alignment = Element.ALIGN_LEFT;
-                Paragraph h2 = new Paragraph();
-                h2.Alignment = Element.ALIGN_CENTER;
-                p.Add(new Chunk("Colegio Santa Ana", fontTitle));
-                document.Add(p);
-                document.Add(new Chunk("\n"));
 
-                Font fontEscuela = FontFactory.GetFont(FontFactory.TIMES, 12);
-                Paragraph para = new Paragraph();
-                para.Alignment = Element.ALIGN_LEFT;
-                para.Add(new Chunk("Docente: " + this.profesores.Nombre + " " + this.profesores.Apellido, fontEscuela));
-                para.Add(new Chunk("\nMateria: " + this.txtMateriaShow.Text, fontEscuela));
+                //Letra personalizada
+                string nameFont = HttpContext.Current.Server.MapPath("assets/fonts/ArialCE.ttf");
+
+                BaseFont baseFont = BaseFont.CreateFont(nameFont, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                Font fontText = new Font(baseFont, 10, 0, BaseColor.BLACK);
+                Font fontTextBold = new Font(baseFont, 10, 1, BaseColor.BLACK);
+                Font fontTextUnderline = new Font(baseFont, 10, 4, BaseColor.BLACK);
+              
+                //Table detalles
+                PdfPTable tbDetalles = new PdfPTable(6);
+                tbDetalles.WidthPercentage = 100f;
+                tbDetalles.TotalWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin;
+                tbDetalles.DefaultCell.Border = 0;
+
+                //Titulo Docente
+                PdfPCell _cell = new PdfPCell(new Paragraph("Docente: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+                
+                //Detalle titulo Docente
+                _cell = new PdfPCell(new Paragraph(this.profesores.Nombre + " " + this.profesores.Apellido, fontText));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+                
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+                
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+                
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Titulo Impartiendo
+                _cell = new PdfPCell(new Paragraph("Impartiendo: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Abrimos conexion para saber el grado
                 SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
                 con.Open();
                 SqlCommand cmd = con.CreateCommand();
@@ -190,43 +198,91 @@ namespace escuela
 
                 if (dr.Read())
                 {
-                    para.Add(new Chunk("\nImpartiendo: " + dr[0].ToString(), fontEscuela));
+                    grado = dr[0].ToString();
+                    //Detalle titulo Impartiendo
+                    _cell = new PdfPCell(new Paragraph(grado, fontText));
+                    _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                    _cell.Border = 0;
+                    tbDetalles.AddCell(_cell);
                 }
                 dr.Close();
                 con.Close();
-                para.Add(new Chunk("\nFecha de impresión: " + DateTime.Now.ToShortDateString(), fontEscuela));
+                
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+                
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+                
+                //Titulo Seccion
+                _cell = new PdfPCell(new Paragraph("Seccion: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Abrimos conexion para saber la Seccion
+                con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
+                con.Open();
+                cmd = con.CreateCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT seccion from Grado where idGrado = @idGrado";
+                cmd.Parameters.AddWithValue("@idGrado", this.profesores.IdGrado);
+                cmd.ExecuteNonQuery();
+                dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                {
+                    seccion = dr[0].ToString();
+                    //Detalle titulo Seccion
+                    _cell = new PdfPCell(new Paragraph(seccion, fontText));
+                    _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                    _cell.Border = 0;
+                    tbDetalles.AddCell(_cell);
+                }
+                dr.Close();
+                con.Close();
+                
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                document.Add(tbDetalles);
+
                 document.Add(new Chunk("\n"));
                 document.Add(new Chunk("\n"));
-                if (trimes < 4)
-                {
-                    h2.Add(new Chunk("\nPeriodo " + trimes, fontSubTitle));
-                }
-                else
-                {
-                    h2.Add(new Chunk("\nNotas finales", fontSubTitle));
-                }
-                h2.Add(new Chunk("\n", fontSubTitle));
-                document.Add(para);
-                document.Add(h2);
                 document.Add(new Chunk("\n"));
 
-                Font font9 = FontFactory.GetFont(FontFactory.TIMES, 12);
+                //Linea
+                Chunk linea = new Chunk(new LineSeparator(1f, 100f, BaseColor.BLACK, Element.ALIGN_CENTER, -1));
+                document.Add(new Paragraph(linea));
+                document.Add(new Chunk("\n"));
+                document.Add(new Chunk("Materia: "+this.DropDownList1.SelectedItem.Text, fontTextUnderline));
+
                 PdfPTable table = new PdfPTable(dt.Columns.Count);
 
+                table.WidthPercentage = 100f;
 
-                float[] widths = new float[dt.Columns.Count];
-                for (int i = 0; i < dt.Columns.Count; i++)
-                    widths[i] = 4f;
-
-                table.SetWidths(widths);
-                table.WidthPercentage = 90;
-
-                PdfPCell cell = new PdfPCell(new Phrase("columns"));
-                cell.Colspan = dt.Columns.Count;
+                _cell = new PdfPCell();
 
                 foreach (DataColumn c in dt.Columns)
                 {
-                    table.AddCell(new Phrase(c.ColumnName, font9));
+                    _cell = new PdfPCell(new Paragraph(new Chunk(c.ColumnName, fontText)));
+                    _cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    table.AddCell(_cell);
                 }
 
                 foreach (DataRow r in dt.Rows)
@@ -235,14 +291,16 @@ namespace escuela
                     {
                         for (int h = 0; h < dt.Columns.Count; h++)
                         {
-                            table.AddCell(new Phrase(r[h].ToString(), font9));
+                            _cell = new PdfPCell(new Paragraph(new Chunk(r[h].ToString(), fontText)));
+                            _cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                            table.AddCell(_cell);
                         }
                     }
                 }
                 document.Add(table);
                 document.Close();
                 Response.ContentType = "application/pdf";
-                Response.AddHeader("content-disposition", "attachment;filename=CalificacionesAlumnos" + ".pdf");
+                Response.AddHeader("content-disposition", "attachment;filename=CalificacionesAlumnos" +grado+seccion+ ".pdf");
                 HttpContext.Current.Response.Write(document);
                 Response.Flush();
                 Response.End();
@@ -252,6 +310,24 @@ namespace escuela
         protected void SqlDataSource1_Selecting(object sender, SqlDataSourceSelectingEventArgs e)
         {
 
+        }
+
+        protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+
+        }
+
+        protected void TextBox1_TextChanged(object sender, EventArgs e)
+        {
+        }
+
+        protected void DropDownList1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+        }
+
+        protected void DropDownList2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Session["Periodo"] = Convert.ToInt32(this.DropDownList2.SelectedItem.Text);
         }
     }
 }
