@@ -128,12 +128,11 @@
                                     <AlternatingRowStyle BackColor="White" />
                                     <Columns>
                                         <asp:BoundField DataField="idEvaluaciones" HeaderText="idEvaluaciones" InsertVisible="False" ReadOnly="True" SortExpression="idEvaluaciones" />
-                                        <asp:BoundField DataField="Apellido" HeaderText="Apellido" SortExpression="Apellido" ReadOnly="True"/>
-                                        <asp:BoundField DataField="Nombre" HeaderText="Nombre" SortExpression="Nombre" ReadOnly="True"/>
+                                        <asp:BoundField DataField="Apellido" HeaderText="Apellido" SortExpression="Apellido"/>
+                                        <asp:BoundField DataField="Nombre" HeaderText="Nombre" SortExpression="Nombre"/>
                                         <asp:BoundField DataField="Evaluacion1" HeaderText="Evaluacion1" SortExpression="Evaluacion1" />
                                         <asp:BoundField DataField="Evaluacion2" HeaderText="Evaluacion2" SortExpression="Evaluacion2" />
                                         <asp:BoundField DataField="Evaluacion3" HeaderText="Evaluacion3" SortExpression="Evaluacion3" />
-                                        <asp:BoundField DataField="Evaluacion4" HeaderText="Evaluacion4" SortExpression="Evaluacion4" />
                                     </Columns>
                                     <EditRowStyle BackColor="#2461BF" />
                                     <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
@@ -147,7 +146,7 @@
                                     <SortedDescendingHeaderStyle BackColor="#4870BE" />
                                 </asp:GridView>
 
-                                <asp:SqlDataSource ID="SqlDataSource11" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT Evaluaciones.idEvaluaciones,Alumnos.apellido as Apellido,Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluacion1', Evaluaciones.evaluacion2 as 'Evaluacion2', Evaluaciones.evaluacion3 as 'Evaluacion3',Evaluaciones.evaluacion4 as 'Evaluacion4' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)" UpdateCommand="UPDATE Evaluaciones SET evaluacion1 = @evaluacion1, evaluacion2 = @evaluacion2, evaluacion3 = @evaluacion3,evaluacion4 = @evaluacion4 WHERE (idEvaluaciones = @idEvaluaciones)">
+                                <asp:SqlDataSource ID="SqlDataSource11" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT Evaluaciones.idEvaluaciones,Alumnos.apellido as Apellido,Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluacion1', Evaluaciones.evaluacion2 as 'Evaluacion2', Evaluaciones.evaluacion3 as 'Evaluacion3' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)" UpdateCommand="UPDATE Evaluaciones SET evaluacion1 = @evaluacion1, evaluacion2 = @evaluacion2, evaluacion3 = @evaluacion3 WHERE (idEvaluaciones = @idEvaluaciones)">
                                     <SelectParameters>
                                         <asp:ControlParameter ControlID="DropDownList1" Name="idMateria" PropertyName="SelectedValue" />
                                         <asp:ControlParameter ControlID="txtProfesorSeleccionado" Name="idProfesores" PropertyName="Text" />
@@ -157,7 +156,6 @@
                                         <asp:Parameter Name="evaluacion1" />
                                         <asp:Parameter Name="evaluacion2" />
                                         <asp:Parameter Name="evaluacion3" />
-                                        <asp:Parameter Name="evaluacion4" />
                                         <asp:Parameter Name="idEvaluaciones" />
                                     </UpdateParameters>
                                 </asp:SqlDataSource>

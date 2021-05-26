@@ -10,6 +10,7 @@ namespace escuela.Interfaces
     interface IProfesores : ICrudGenerico<Profesores>
     {
         Profesores listaId(int id);
+        Profesores listaIdxGrado(int idGrado);
         Profesores listaLogin(string email, string contrasena);
         Profesores listaLogin(string email);
     }

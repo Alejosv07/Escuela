@@ -32,10 +32,6 @@ namespace escuela
             this.evaluaciones = new Evaluaciones();
             this.evaluacionesImpt = new EvaluacionesImpt();
             this.txtProfesorSeleccionado.Text = Convert.ToString(profesores.IdProfesores);
-            if (this.profesores.IdGrado <= 18)
-            {
-                this.GridView1.Columns[6].Visible = false;
-            }
             if(!IsPostBack)
             {
                 SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
@@ -72,20 +68,13 @@ namespace escuela
             this.btnImprimirClick(sender,e);
         }
         
-
         public DataTable dtProfesor()
         {
             DataTable dt = new DataTable();
             SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
             SqlCommand cmd = con.CreateCommand();
             cmd.CommandType = CommandType.Text;
-            if (this.profesores.IdGrado <= 18)
-            {
-                cmd.CommandText = "SELECT Alumnos.apellido as 'Apellido', Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluación1(35%)', Evaluaciones.evaluacion2 as 'Evaluación2(35%)', Evaluaciones.evaluacion3 as 'Evaluación3(30%)',((Evaluaciones.evaluacion1*0.35)+(Evaluaciones.evaluacion2*0.35)+(Evaluaciones.evaluacion3*0.30)) as 'PromedioPeriodo' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)";
-            }
-            else {
-                cmd.CommandText = "SELECT Alumnos.apellido as 'Apellido', Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluación1(25%)', Evaluaciones.evaluacion2 as 'Evaluación2(25%)', Evaluaciones.evaluacion3 as 'Evaluación3(25%)',Evaluaciones.evaluacion4 as 'Evaluación4(25%)',((Evaluaciones.evaluacion1*0.25)+(Evaluaciones.evaluacion2*0.25)+(Evaluaciones.evaluacion3*0.25)+(Evaluaciones.evaluacion4*0.25)) as 'PromedioPeriodo' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)";
-            }
+            cmd.CommandText = "SELECT Alumnos.apellido as 'Apellido', Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluación1(35%)', Evaluaciones.evaluacion2 as 'Evaluación2(35%)', Evaluaciones.evaluacion3 as 'Evaluación3(30%)',((Evaluaciones.evaluacion1*0.35)+(Evaluaciones.evaluacion2*0.35)+(Evaluaciones.evaluacion3*0.30)) as 'PromedioPeriodo' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)";
             cmd.Parameters.AddWithValue("@idMateria", this.DropDownList1.SelectedValue.ToString().Trim());
             cmd.Parameters.AddWithValue("@idProfesores", this.txtProfesorSeleccionado.Text);
             cmd.Parameters.AddWithValue("@idTrimestre", this.DropDownList2.SelectedValue.ToString().Trim());
@@ -105,8 +94,9 @@ namespace escuela
                 //Menores a bachillerato
                 cmd.CommandText = "EXEC dbo.NotasPorMateria @usuarioProfesor = "+ this.profesores.Usuario+", @materiaGrado = "+this.DropDownList1.SelectedItem.ToString().Trim()+";";
             }
-            else { 
+            else {
                 //Falta
+                cmd.CommandText = "EXEC dbo.NotasPorMateriaBachillerato @usuarioProfesor = '"+ this.profesores.Usuario+ "', @materiaGrado = '" + this.DropDownList1.SelectedItem.ToString().Trim() + "';";
             }
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.Fill(dt);

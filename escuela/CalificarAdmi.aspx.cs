@@ -16,8 +16,10 @@ namespace escuela
     public partial class CalificarAdmi : System.Web.UI.Page
     {
         Profesores profesores;
+        Profesores profesores2;
         Evaluaciones evaluaciones;
         EvaluacionesImpt evaluacionesImpt;
+        ProfesoresImpt profesoresImpt;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["Cuenta"] == null)
@@ -26,20 +28,44 @@ namespace escuela
             }
             else
             {
+                this.profesoresImpt = new ProfesoresImpt();
                 profesores = (Profesores)Session["Cuenta"];
+                if (Session["Cuenta2"] != null)
+                {
+                    profesores2 = (Profesores)Session["Cuenta2"];
+                }
+                else {
+                    SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
+                    con.Open();
+                    SqlCommand cmd = con.CreateCommand();
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "select top 1 Grado.idGrado from Grado inner join Profesores on Profesores.idGrado = Grado.idGrado where Profesores.nivel <> 1 ;";
+                    cmd.ExecuteNonQuery();
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    int idGrado;
+                    if (dr.Read())
+                    {
+                        idGrado = Convert.ToInt32(dr[0].ToString().Trim());
+                        Session["Cuenta2"] = this.profesoresImpt.listaIdxGrado(idGrado);
+                    }
+                    dr.Close();
+                    con.Close();
+                }
             }
             this.evaluaciones = new Evaluaciones();
             this.evaluacionesImpt = new EvaluacionesImpt();
             this.txtProfesorSeleccionado.Text = Convert.ToString(profesores.IdProfesores);
-            if (!IsPostBack)
-            {
-                Session["Periodo"] = 1;
-                this.GridView1.Columns[6].Visible = false;
-            }
             this.GridView1.Columns[0].Visible = false;
             this.txtProfesorSeleccionado.Text = this.profesores.IdProfesores.ToString().Trim();
             this.lbActu.Text = "Ultima actualización " + DateTime.Now.ToString();
             this.navbarDropdown.InnerText = profesores.Nombre + " " + profesores.Apellido;
+            if (!IsPostBack)
+            {
+                Session["Periodo"] = 1;
+                this.drlGrado.SelectedIndex = 0;
+                this.lbActu.Text = this.drlGrado.SelectedValue.ToString();
+                //profesores2 = this.profesoresImpt.listaIdxGrado(Convert.ToInt32(this.drlGrado.SelectedValue.ToString().Trim()));
+            }
         }
 
         protected void btnSalir_Click(object sender, EventArgs e)
@@ -61,14 +87,7 @@ namespace escuela
             SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
             SqlCommand cmd = con.CreateCommand();
             cmd.CommandType = CommandType.Text;
-            if (Convert.ToInt32(this.drlGrado.SelectedValue.ToString().Trim()) <= 18)
-            {
-                cmd.CommandText = "SELECT Alumnos.apellido as 'Apellido', Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluación1(35%)', Evaluaciones.evaluacion2 as 'Evaluación2(35%)', Evaluaciones.evaluacion3 as 'Evaluación3(30%)',((Evaluaciones.evaluacion1*0.35)+(Evaluaciones.evaluacion2*0.35)+(Evaluaciones.evaluacion3*0.30)) as 'PromedioPeriodo' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno INNER JOIN Profesores ON Profesores.idProfesores = Evaluaciones.idProfesores INNER JOIN Grado ON Profesores.idGrado = Grado.idGrado WHERE (Evaluaciones.idMateria = @idMateria and Grado.idGrado = @idGrado and Evaluaciones.idTrimestre = @idTrimestre)";
-            }
-            else
-            {
-                cmd.CommandText = "SELECT Alumnos.apellido as 'Apellido', Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluación1(25%)', Evaluaciones.evaluacion2 as 'Evaluación2(25%)', Evaluaciones.evaluacion3 as 'Evaluación3(25%)',Evaluaciones.evaluacion4 as 'Evaluación4(25%)',((Evaluaciones.evaluacion1*0.25)+(Evaluaciones.evaluacion2*0.25)+(Evaluaciones.evaluacion3*0.25)+(Evaluaciones.evaluacion4*0.25)) as 'PromedioPeriodo' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno INNER JOIN Profesores ON Profesores.idProfesores = Evaluaciones.idProfesores INNER JOIN Grado ON Profesores.idGrado = Grado.idGrado WHERE (Evaluaciones.idMateria = @idMateria and Grado.idGrado = @idGrado and Evaluaciones.idTrimestre = @idTrimestre)";
-            }
+            cmd.CommandText = "SELECT Alumnos.apellido as 'Apellido', Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluación1(35%)', Evaluaciones.evaluacion2 as 'Evaluación2(35%)', Evaluaciones.evaluacion3 as 'Evaluación3(30%)',((Evaluaciones.evaluacion1*0.35)+(Evaluaciones.evaluacion2*0.35)+(Evaluaciones.evaluacion3*0.30)) as 'PromedioPeriodo' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno INNER JOIN Profesores ON Profesores.idProfesores = Evaluaciones.idProfesores INNER JOIN Grado ON Profesores.idGrado = Grado.idGrado WHERE (Evaluaciones.idMateria = @idMateria and Grado.idGrado = @idGrado and Evaluaciones.idTrimestre = @idTrimestre)";
             cmd.Parameters.AddWithValue("@idMateria", this.drlMateria.SelectedValue.ToString().Trim());
             cmd.Parameters.AddWithValue("@idGrado", this.drlGrado.SelectedValue.ToString().Trim());
             cmd.Parameters.AddWithValue("@idTrimestre", this.drlTrimestre.SelectedValue.ToString().Trim());
@@ -79,18 +98,20 @@ namespace escuela
         }
         public DataTable dtProfesorFinales()
         {
+            this.profesores2 = (Profesores)Session["Cuenta2"];
             DataTable dt = new DataTable();
             SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
             SqlCommand cmd = con.CreateCommand();
             cmd.CommandType = CommandType.Text;
-            if (this.profesores.IdGrado <= 18)
+            if (Convert.ToInt32(this.drlGrado.SelectedValue.ToString().Trim()) <= 18)
             {
                 //Menores a bachillerato
-                cmd.CommandText = "EXEC dbo.NotasPorMateria @usuarioProfesor = " + this.profesores.Usuario + ", @materiaGrado = " + this.drlMateria.SelectedItem.ToString().Trim() + ";";
+                cmd.CommandText = "EXEC dbo.NotasPorMateria @usuarioProfesor = " + this.profesores2.Usuario + ", @materiaGrado = " + this.drlMateria.SelectedItem.ToString().Trim() + ";";
             }
             else
             {
-                //Falta
+                //Bachillerato
+                cmd.CommandText = "EXEC dbo.NotasPorMateriaBachillerato @usuarioProfesor = '" + this.profesores2.Usuario + "', @materiaGrado = '" + this.drlMateria.SelectedItem.ToString().Trim() + "';";
             }
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.Fill(dt);
@@ -199,7 +220,7 @@ namespace escuela
                 Chunk linea = new Chunk(new LineSeparator(1f, 100f, BaseColor.BLACK, Element.ALIGN_CENTER, -1));
                 document.Add(new Paragraph(linea));
                 document.Add(new Chunk("\n"));
-                document.Add(new Chunk("Materia: " + this.drlMateria.SelectedItem.Text, fontTextUnderline));
+                document.Add(new Chunk("Materia: " + this.drlMateria.SelectedItem.Text+" "+this.drlGrado.SelectedItem.Text, fontTextUnderline));
 
                 PdfPTable table = new PdfPTable(dt.Columns.Count);
 
@@ -238,13 +259,7 @@ namespace escuela
 
         protected void DropDownList1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (Convert.ToInt32(this.drlGrado.SelectedValue.ToString().Trim()) <= 18)
-            {
-                this.GridView1.Columns[6].Visible = false;
-            }
-            else {
-                this.GridView1.Columns[6].Visible = true;
-            }
+            Session["Cuenta2"] = this.profesoresImpt.listaIdxGrado(Convert.ToInt32(this.drlGrado.SelectedValue.ToString().Trim()));
         }
 
         protected void DropDownList2_SelectedIndexChanged(object sender, EventArgs e)

@@ -43,7 +43,7 @@ namespace escuela.Clases
                 }
                 else
                 {
-                    cmd.CommandText = "select Materia.materia as Materia,evaluacion1 as 'Evaluacion1(35%)',evaluacion2 as 'Evaluacion2(35%)',evaluacion3 as 'Evaluacion3(30%)',CONVERT(DECIMAL(10,2),((evaluacion1*0.35)+(evaluacion2*0.35)+(evaluacion3*0.30))) as Promedio, Case When CONVERT(DECIMAL(10, 2), ((evaluacion1 * 0.35) + (evaluacion2 * 0.35) + (evaluacion3 * 0.30))) > 5 THEN 'Aprobado' When CONVERT(DECIMAL(10,2),((evaluacion1 * 0.35) + (evaluacion2 * 0.35) + (evaluacion3 * 0.30))) < 6 THEN 'Reprobado' END AS Estado from Evaluaciones inner join Materia on Materia.idMateria = Evaluaciones.idMateria where Evaluaciones.idAlumno = @idAlumno and Evaluaciones.idTrimestre = @idTrimestre and Evaluaciones.idMateria <= 5; ";
+                    cmd.CommandText = "select Materia.materia as Materia,evaluacion1 as 'Evaluacion1(35%)',evaluacion2 as 'Evaluacion2(35%)',evaluacion3 as 'Evaluacion3(30%)',CONVERT(DECIMAL(10,2),((evaluacion1*0.35)+(evaluacion2*0.35)+(evaluacion3*0.30))) as Promedio, Case When CONVERT(DECIMAL(10, 2), ((evaluacion1 * 0.35) + (evaluacion2 * 0.35) + (evaluacion3 * 0.30))) > 5 THEN 'Aprobado' When CONVERT(DECIMAL(10,2),((evaluacion1 * 0.35) + (evaluacion2 * 0.35) + (evaluacion3 * 0.30))) < 6 THEN 'Reprobado' END AS Estado from Evaluaciones inner join Materia on Materia.idMateria = Evaluaciones.idMateria where Evaluaciones.idAlumno = @idAlumno and Evaluaciones.idTrimestre = @idTrimestre;";
                     cmd.Parameters.AddWithValue("@idAlumno", t.IdAlumno);
                     cmd.Parameters.AddWithValue("@idTrimestre", trimestre);
                 }
@@ -52,11 +52,11 @@ namespace escuela.Clases
                 //Es bachillerato
                 if (trimestre == 5)
                 {
-                    cmd.CommandText = "EXEC dbo.NotasFinales2 @usuario = '" + e.Usuario + "'";
+                    cmd.CommandText = "EXEC NotasFinalesBachilleratoAlumno @usuario = '" + e.Usuario + "'";
                 }
                 else
                 {
-                    cmd.CommandText = "select Materia.materia as Materia,evaluacion1 as 'Evaluacion1(25%)',evaluacion2 as 'Evaluacion2(25%)',evaluacion3 as 'Evaluacion3(25%)',evaluacion4 as 'Evaluacion4(25%)',CONVERT(DECIMAL(10,2),((evaluacion1*0.25)+(evaluacion2*0.25)+(evaluacion3*0.25)+(evaluacion4*0.25))) as Promedio, Case When CONVERT(DECIMAL(10, 2), ((evaluacion1 * 0.35) + (evaluacion2 * 0.35) + (evaluacion3 * 0.30))) > 5 THEN 'Aprobado' When CONVERT(DECIMAL(10,2),((evaluacion1 * 0.35) + (evaluacion2 * 0.35) + (evaluacion3 * 0.30))) < 6 THEN 'Reprobado' END AS Estado from Evaluaciones inner join Materia on Materia.idMateria = Evaluaciones.idMateria where Evaluaciones.idAlumno = @idAlumno and Evaluaciones.idTrimestre = @idTrimestre; ";
+                    cmd.CommandText = "select Materia.materia as Materia,evaluacion1 as 'Evaluacion1(35%)',evaluacion2 as 'Evaluacion2(35%)',evaluacion3 as 'Evaluacion3(30%)',CONVERT(DECIMAL(10,2),((evaluacion1*0.35)+(evaluacion2*0.35)+(evaluacion3*0.30))) as Promedio, Case When CONVERT(DECIMAL(10, 2), ((evaluacion1 * 0.35) + (evaluacion2 * 0.35) + (evaluacion3 * 0.30))) > 5 THEN 'Aprobado' When CONVERT(DECIMAL(10,2),((evaluacion1 * 0.35) + (evaluacion2 * 0.35) + (evaluacion3 * 0.30))) < 6 THEN 'Reprobado' END AS Estado from Evaluaciones inner join Materia on Materia.idMateria = Evaluaciones.idMateria where Evaluaciones.idAlumno = @idAlumno and Evaluaciones.idTrimestre = @idTrimestre;";
                     cmd.Parameters.AddWithValue("@idAlumno", t.IdAlumno);
                     cmd.Parameters.AddWithValue("@idTrimestre", trimestre);
                 }

@@ -116,6 +116,9 @@
                             <div class="col">
                                 <button class="btn btn-primary" runat="server" onserverclick="btnPDF_Click"><i class="fas fa-print"></i> Imprimir</button>
                             </div>
+                            <div class="col">
+                                <button class="btn btn-primary" runat="server" onserverclick="btnPromedioFinal_Click"><i class="fas fa-print"></i> Imprimir notas finales</button>
+                            </div>
                         </div>
                     </div>
                 </section>

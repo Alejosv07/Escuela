@@ -90,25 +90,11 @@ namespace escuela
             Session["Cuenta"] = null;
             Server.Transfer("Login.aspx");
         }
-        protected void btnP1_Click(object sender, EventArgs e)
+        
+        protected void btnPromedioFinal_Click(object sender, EventArgs e)
         {
-            Session["Periodo"] = 1;
-            this.cargarTablaPrincipal(1);
-        }
-        protected void btnP2_Click(object sender, EventArgs e)
-        {
-            Session["Periodo"] = 2;
-            this.cargarTablaPrincipal(2);
-        }
-        protected void btnP3_Click(object sender, EventArgs e)
-        {
-            Session["Periodo"] = 3;
-            this.cargarTablaPrincipal(3);
-        }
-        protected void btnPF_Click(object sender, EventArgs e)
-        {
-            Session["Periodo"] = 4;
-            this.cargarTablaPrincipal(4);
+            Session["Periodo"] = 5;
+            btnPDF_Click(sender,e);
         }
 
         protected void btnPDF_Click(object sender, EventArgs e)

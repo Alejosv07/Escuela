@@ -68,6 +68,29 @@ namespace escuela.Clases
             return profesores;
         }
 
+        public Profesores listaIdxGrado(int idGrado)
+        {
+            //select Evaluaciones.idProfesores from Evaluaciones inner join Profesores on Profesores.idProfesores = Evaluaciones.idProfesores Inner join Grado on Grado.idGrado = Profesores.idGrado where Grado.idGrado = 19 group by Evaluaciones.idProfesores;
+            Profesores profesores = new Profesores();
+            SqlConnection con = this.conexion();
+            SqlCommand cmd = con.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "select Evaluaciones.idProfesores from Evaluaciones inner join Profesores on Profesores.idProfesores = Evaluaciones.idProfesores Inner join Grado on Grado.idGrado = Profesores.idGrado where Grado.idGrado = @idGrado group by Evaluaciones.idProfesores;";
+            cmd.Parameters.AddWithValue("@idGrado", idGrado);
+            cmd.ExecuteNonQuery();
+
+            SqlDataReader dr = cmd.ExecuteReader();
+            int idProfesor = 0;
+            if (dr.Read())
+            {
+                idProfesor = Convert.ToInt32(dr[0].ToString());
+            }
+            dr.Close();
+            con.Close();
+            profesores = this.listaId(idProfesor);
+            return profesores;
+        }
+
         public Profesores listaLogin(string email, string contrasena)
         {
             Profesores profesores = new Profesores();
