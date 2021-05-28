@@ -44,7 +44,7 @@
                 <a href="Escuela.aspx" class="d-block p-3 text-muted"><i class="fas fa-school mr-2 lead"></i> Escuela</a>
                 <a href="MiInfoAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-user mr-2 lead"></i> Mi información</a>
                 <a href="IndexAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-user mr-2 lead"></i> Profesores</a>
-                <a href="CalificarAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-database mr-2 lead"></i> Calificar</a>
+                <a href="CalificarAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-book-open mr-2 lead"></i> Calificar</a>
                 <a href="EstudianteAdmi.aspx" class="d-block p-3 text-primary"><i class="fas fa-user mr-2 lead""></i> Estudiantes</a>
                 <a href="RespaldoAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-database mr-2 lead"></i> Respaldo</a>
             </div>
@@ -68,6 +68,7 @@
                                     <a class="dropdown-item" href="Escuela.aspx"><i class="fas fa-school mr-2 lead"></i> Escuela</a>
                                     <a class="dropdown-item" href="MiInfoAdmi.aspx"><i class="fas fa-user mr-2 lead"></i> Mi información</a>
                                     <a class="dropdown-item" href="IndexAdmi.aspx"><i class="fas fa-user mr-2 lead"></i> Profesores</a>
+                                    <a class="dropdown-item" href="CalificarAdmi.aspx"><i class="fas fa-book-open mr-2 lead"></i> Calificar</a>
                                     <a class="dropdown-item" href="EstudianteAdmi.aspx"><i class="fas fa-user mr-2 lead"></i> Estudiantes</a>
                                     <a class="dropdown-item" href="RespaldoAdmi.aspx"><i class="fas fa-database mr-2 lead"></i> Respaldo</a>
                                     <div class="dropdown-divider"></div>
@@ -152,7 +153,9 @@
                                                 <button class="btn btn-success" runat="server" onserverclick="GuardarEstudiante"><i class="fas fa-plus"></i> Registar estudiante</button>
                                             </div>
                                         </div>
-
+                                       <div class="row py-3 px-4">
+                                            <asp:ValidationSummary ID="ValidationSummary1" ForeColor="Red" CssClass="pt-2" HeaderText="Errores:" runat="server" />
+                                        </div>
                                         <div class="row">
                                             <div class="col">
 
@@ -160,12 +163,36 @@
                                                     <AlternatingRowStyle BackColor="White" />
                                                     <Columns>
                                                         <asp:BoundField DataField="idAlumno" HeaderText="idAlumno" InsertVisible="False" ReadOnly="True" SortExpression="idAlumno" />
-                                                        <asp:BoundField DataField="nombre" HeaderText="Nombre" 
-                                                            SortExpression="nombre" />
-                                                        <asp:BoundField DataField="apellido" HeaderText="Apellido" 
-                                                            SortExpression="apellido" />
-                                                        <asp:BoundField DataField="carnet" HeaderText="Carnet" 
-                                                            SortExpression="carnet" />
+                                                        <asp:TemplateField HeaderText="Nombre" SortExpression="nombre">
+                                                            <EditItemTemplate>
+                                                                <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("nombre") %>'></asp:TextBox>
+                                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="Nombre: Campo requerido"
+                                                                     ControlToValidate="TextBox1" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                                                            </EditItemTemplate>
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="Label1" runat="server" Text='<%# Bind("nombre") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:TemplateField HeaderText="Apellido" SortExpression="apellido">
+                                                            <EditItemTemplate>
+                                                                <asp:TextBox ID="TextBox2" runat="server" Text='<%# Bind("apellido") %>'></asp:TextBox>
+                                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Apellido: Campo requerido"
+                                                                     ControlToValidate="TextBox2" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                                                            </EditItemTemplate>
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="Label2" runat="server" Text='<%# Bind("apellido") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:TemplateField HeaderText="Carnet" SortExpression="carnet">
+                                                            <EditItemTemplate>
+                                                                <asp:TextBox ID="TextBox3" runat="server" Text='<%# Bind("carnet") %>'></asp:TextBox>
+                                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ErrorMessage="Carnet: Campo requerido"
+                                                                     ControlToValidate="TextBox3" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                                                            </EditItemTemplate>
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="Label3" runat="server" Text='<%# Bind("carnet") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Grado" SortExpression="idGrado">
                                                             <EditItemTemplate>
                                                                 <asp:DropDownList ID="DropDownList4" runat="server" 
@@ -188,15 +215,56 @@
                                                                 </asp:SqlDataSource>
                                                             </ItemTemplate>
                                                         </asp:TemplateField>
-                                                        <asp:BoundField DataField="responsableNombre" HeaderText="Nombre responsable" 
-                                                            SortExpression="responsableNombre" />
-                                                        <asp:BoundField DataField="responsableApellido" 
-                                                            HeaderText="Apellido  responsable" SortExpression="responsableApellido" />
-                                                        <asp:BoundField DataField="email" HeaderText="Email" SortExpression="email" />
-                                                        <asp:BoundField DataField="usuario" HeaderText="Usuario" 
-                                                            SortExpression="usuario" />
-                                                        <asp:BoundField DataField="contra" HeaderText="Contrasena" 
-                                                            SortExpression="contra" />
+                                                        <asp:TemplateField HeaderText="Nombre responsable" SortExpression="responsableNombre">
+                                                            <EditItemTemplate>
+                                                                <asp:TextBox ID="TextBox4" runat="server" Text='<%# Bind("responsableNombre") %>'></asp:TextBox>
+                                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" ErrorMessage="Nombre de responsable: Campo requerido"
+                                                                     ControlToValidate="TextBox4" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                                                            </EditItemTemplate>
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="Label4" runat="server" Text='<%# Bind("responsableNombre") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:TemplateField HeaderText="Apellido  responsable" SortExpression="responsableApellido">
+                                                            <EditItemTemplate>
+                                                                <asp:TextBox ID="TextBox5" runat="server" Text='<%# Bind("responsableApellido") %>'></asp:TextBox>
+                                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator5" runat="server" ErrorMessage="Apellido de responsable: Campo requerido"
+                                                                     ControlToValidate="TextBox5" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                                                            </EditItemTemplate>
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="Label5" runat="server" Text='<%# Bind("responsableApellido") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:TemplateField HeaderText="Email" SortExpression="email">
+                                                            <EditItemTemplate>
+                                                                <asp:TextBox ID="TextBox6" runat="server" Text='<%# Bind("email") %>'></asp:TextBox>
+                                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator6" runat="server" ErrorMessage="Apellido de responsable: Campo requerido"
+                                                                     ControlToValidate="TextBox6" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                                                            </EditItemTemplate>
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="Label6" runat="server" Text='<%# Bind("email") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:TemplateField HeaderText="Usuario" SortExpression="usuario">
+                                                            <EditItemTemplate>
+                                                                <asp:TextBox ID="TextBox7" runat="server" Text='<%# Bind("usuario") %>'></asp:TextBox>
+                                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator7" runat="server" ErrorMessage="Usuario: Campo requerido"
+                                                                     ControlToValidate="TextBox7" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                                                            </EditItemTemplate>
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="Label7" runat="server" Text='<%# Bind("usuario") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:TemplateField HeaderText="Contrasena" SortExpression="contra">
+                                                            <EditItemTemplate>
+                                                                <asp:TextBox ID="TextBox8" runat="server" Text='<%# Bind("contra") %>'></asp:TextBox>
+                                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator8" runat="server" ErrorMessage="Contrasena: Campo requerido"
+                                                                     ControlToValidate="TextBox8" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                                                            </EditItemTemplate>
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="Label8" runat="server" Text='<%# Bind("contra") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
                                                     </Columns>
                                                     <EditRowStyle BackColor="#2461BF" />
                                                     <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />

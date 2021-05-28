@@ -128,11 +128,44 @@
                                     <AlternatingRowStyle BackColor="White" />
                                     <Columns>
                                         <asp:BoundField DataField="idEvaluaciones" HeaderText="idEvaluaciones" InsertVisible="False" ReadOnly="True" SortExpression="idEvaluaciones" />
-                                        <asp:BoundField DataField="Apellido" HeaderText="Apellido" SortExpression="Apellido"/>
-                                        <asp:BoundField DataField="Nombre" HeaderText="Nombre" SortExpression="Nombre"/>
-                                        <asp:BoundField DataField="Evaluacion1" HeaderText="Evaluacion1" SortExpression="Evaluacion1" />
-                                        <asp:BoundField DataField="Evaluacion2" HeaderText="Evaluacion2" SortExpression="Evaluacion2" />
-                                        <asp:BoundField DataField="Evaluacion3" HeaderText="Evaluacion3" SortExpression="Evaluacion3" />
+                                        <asp:BoundField DataField="Apellido" HeaderText="Apellido" SortExpression="Apellido" ReadOnly="true"/>
+                                        <asp:BoundField DataField="Nombre" HeaderText="Nombre" SortExpression="Nombre" ReadOnly="true"/>
+                                        <asp:TemplateField HeaderText="Evaluacion1" SortExpression="Evaluacion1">
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="txtEva1" runat="server" Text='<%# Bind("Evaluacion1") %>'></asp:TextBox>
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="Evaluación 1: Campo requerido"
+                                                    ControlToValidate="txtEva1" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                                                <asp:RangeValidator ID="RangeValidator1" runat="server" ErrorMessage="Evaluación 1: Rango de números permitido de 0-10" Text="*"
+                                                    ControlToValidate="txtEva1" MinimumValue="0" MaximumValue="10" ForeColor="Red" Type="Double"></asp:RangeValidator>
+                                            </EditItemTemplate>
+                                            <ItemTemplate>
+                                                <asp:Label ID="Label1" runat="server" Text='<%# Bind("Evaluacion1") %>'></asp:Label>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Evaluacion2" SortExpression="Evaluacion2">
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="txtEva2" runat="server" Text='<%# Bind("Evaluacion2") %>'></asp:TextBox>
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Evaluación 2: Campo requerido"
+                                                    ControlToValidate="txtEva2" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                                                <asp:RangeValidator ID="RangeValidator2" runat="server" ErrorMessage="Evaluación 2: Rango de números permitido de 0-10" Text="*"
+                                                    ControlToValidate="txtEva2" MinimumValue="0" MaximumValue="10" ForeColor="Red" Type="Double"></asp:RangeValidator>
+                                            </EditItemTemplate>
+                                            <ItemTemplate>
+                                                <asp:Label ID="Label2" runat="server" Text='<%# Bind("Evaluacion2") %>'></asp:Label>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Evaluacion3" SortExpression="Evaluacion3">
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="txtEva3" runat="server" Text='<%# Bind("Evaluacion3") %>'></asp:TextBox>
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ErrorMessage="Evaluación 3: Campo requerido"
+                                                    ControlToValidate="txtEva3" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                                                <asp:RangeValidator ID="RangeValidator3" runat="server" ErrorMessage="Evaluación 3: Rango de números permitido de 0-10" Text="*"
+                                                    ControlToValidate="txtEva3" MinimumValue="0" MaximumValue="10" ForeColor="Red" Type="Double"></asp:RangeValidator>
+                                            </EditItemTemplate>
+                                            <ItemTemplate>
+                                                <asp:Label ID="Label3" runat="server" Text='<%# Bind("Evaluacion3") %>'></asp:Label>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
                                     </Columns>
                                     <EditRowStyle BackColor="#2461BF" />
                                     <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
@@ -145,7 +178,6 @@
                                     <SortedDescendingCellStyle BackColor="#E9EBEF" />
                                     <SortedDescendingHeaderStyle BackColor="#4870BE" />
                                 </asp:GridView>
-
                                 <asp:SqlDataSource ID="SqlDataSource11" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT Evaluaciones.idEvaluaciones,Alumnos.apellido as Apellido,Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluacion1', Evaluaciones.evaluacion2 as 'Evaluacion2', Evaluaciones.evaluacion3 as 'Evaluacion3' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)" UpdateCommand="UPDATE Evaluaciones SET evaluacion1 = @evaluacion1, evaluacion2 = @evaluacion2, evaluacion3 = @evaluacion3 WHERE (idEvaluaciones = @idEvaluaciones)">
                                     <SelectParameters>
                                         <asp:ControlParameter ControlID="DropDownList1" Name="idMateria" PropertyName="SelectedValue" />
@@ -179,6 +211,9 @@
                                 
 
                             </div>
+                        </div>
+                        <div class="row py-3 px-4">
+                            <asp:ValidationSummary ID="ValidationSummary1" ForeColor="Red" CssClass="pt-2" HeaderText="Errores:" runat="server" />
                         </div>
                         <div class="row my-2">
                             <div class="col">

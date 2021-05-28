@@ -19,7 +19,7 @@
         <div class="sidebar-container">
             <div class="logo">
                 <img src="assets/img/Logo.png" class="my-3"/>
-                <h5 class="font-weight-bold text-white">Profesor</h5>
+                <h5 class="font-weight-bold text-white">Administrador</h5>
             </div>
             <div class="row">
                 <div class="col text-white">
@@ -30,7 +30,7 @@
                 <a href="Escuela.aspx" class="d-block p-3 text-muted"><i class="fas fa-school mr-2 lead"></i> Escuela</a>
                 <a href="MiInfoAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-user mr-2 lead"></i> Mi información</a>
                 <a href="IndexAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-user mr-2 lead"></i> Profesores</a>
-                <a href="CalificarAdmi.aspx" class="d-block p-3 text-primary"><i class="fas fa-database mr-2 lead"></i> Calificar</a>
+                <a href="CalificarAdmi.aspx" class="d-block p-3 text-primary"><i class="fas fa-book-open mr-2 lead"></i> Calificar</a>
                 <a href="EstudianteAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-user mr-2 lead""></i> Estudiantes</a>
                 <a href="RespaldoAdmi.aspx" class="d-block p-3 text-muted"><i class="fas fa-database mr-2 lead"></i> Respaldo</a>            
             </div>
@@ -53,7 +53,7 @@
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="MiInfoProfesor.aspx"><i class="fas fa-calendar-alt lead"></i> Mi información</a>
                                     <a class="dropdown-item" href="IndexProfesores.aspx"><i class="fas fa-book-open lead"></i> Calificaciones</a>
-                                    <a class="dropdown-item" href="CalificarAdmi.aspx"><i class="fas fa-database mr-2 lead"></i> Calificar</a>
+                                    <a class="dropdown-item" href="CalificarAdmi.aspx"><i class="fas fa-book-open mr-2 lead"></i> Calificar</a>
                                     <a class="dropdown-item" href="EstudianteAdmi.aspx"><i class="fas fa-user mr-2 lead"></i> Estudiantes</a>
                                     <a class="dropdown-item" href="ReportesMaestros.aspx"><i class="fas fa-book-open lead"></i> Reportes</a>
                                     <div class="dropdown-divider"></div>
@@ -134,11 +134,44 @@
                                     <AlternatingRowStyle BackColor="White" />
                                     <Columns>
                                         <asp:BoundField DataField="idEvaluaciones" HeaderText="idEvaluaciones" InsertVisible="False" ReadOnly="True" SortExpression="idEvaluaciones" />
-                                        <asp:BoundField DataField="Apellido" HeaderText="Apellido" SortExpression="Apellido"/>
-                                        <asp:BoundField DataField="Nombre" HeaderText="Nombre" SortExpression="Nombre"/>
-                                        <asp:BoundField DataField="Evaluacion1" HeaderText="Evaluacion1" SortExpression="Evaluacion1" />
-                                        <asp:BoundField DataField="Evaluacion2" HeaderText="Evaluacion2" SortExpression="Evaluacion2" />
-                                        <asp:BoundField DataField="Evaluacion3" HeaderText="Evaluacion3" SortExpression="Evaluacion3" />
+                                        <asp:BoundField DataField="Apellido" HeaderText="Apellido" SortExpression="Apellido" ReadOnly="True"/>
+                                        <asp:BoundField DataField="Nombre" HeaderText="Nombre" SortExpression="Nombre" ReadOnly="True"/>
+                                        <asp:TemplateField HeaderText="Evaluacion1" SortExpression="Evaluacion1">
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="txtEva1" runat="server" Text='<%# Bind("Evaluacion1") %>'></asp:TextBox>
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="Evaluación 1: Campo requerido"
+                                                    ControlToValidate="txtEva1" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                                                <asp:RangeValidator ID="RangeValidator1" runat="server" ErrorMessage="Evaluación 1: Rango de números permitido de 0-10" Text="*"
+                                                    ControlToValidate="txtEva1" MinimumValue="0" MaximumValue="10" ForeColor="Red" Type="Double"></asp:RangeValidator>
+                                            </EditItemTemplate>
+                                            <ItemTemplate>
+                                                <asp:Label ID="Label1" runat="server" Text='<%# Bind("Evaluacion1") %>'></asp:Label>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Evaluacion2" SortExpression="Evaluacion2">
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="txtEva2" runat="server" Text='<%# Bind("Evaluacion2") %>'></asp:TextBox>
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Evaluación 2: Campo requerido"
+                                                    ControlToValidate="txtEva2" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                                                <asp:RangeValidator ID="RangeValidator2" runat="server" ErrorMessage="Evaluación 2: Rango de números permitido de 0-10" Text="*"
+                                                    ControlToValidate="txtEva2" MinimumValue="0" MaximumValue="10" ForeColor="Red" Type="Double"></asp:RangeValidator>
+                                            </EditItemTemplate>
+                                            <ItemTemplate>
+                                                <asp:Label ID="Label2" runat="server" Text='<%# Bind("Evaluacion2") %>'></asp:Label>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Evaluacion3" SortExpression="Evaluacion3">
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="txtEva3" runat="server" Text='<%# Bind("Evaluacion3") %>'></asp:TextBox>
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ErrorMessage="Evaluación 3: Campo requerido"
+                                                    ControlToValidate="txtEva3" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
+                                                <asp:RangeValidator ID="RangeValidator3" runat="server" ErrorMessage="Evaluación 3: Rango de números permitido de 0-10" Text="*"
+                                                    ControlToValidate="txtEva3" MinimumValue="0" MaximumValue="10" ForeColor="Red" Type="Double"></asp:RangeValidator>
+                                            </EditItemTemplate>
+                                            <ItemTemplate>
+                                                <asp:Label ID="Label3" runat="server" Text='<%# Bind("Evaluacion3") %>'></asp:Label>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
                                     </Columns>
                                     <EditRowStyle BackColor="#2461BF" />
                                     <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
@@ -180,6 +213,9 @@
                                 
 
                             </div>
+                        </div>
+                        <div class="row py-3 px-4">
+                            <asp:ValidationSummary ID="ValidationSummary1" ForeColor="Red" CssClass="pt-2" HeaderText="Errores:" runat="server" />
                         </div>
                         <div class="row my-2">
                             <div class="col">
