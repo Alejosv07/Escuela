@@ -2,10 +2,13 @@
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.draw;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -63,8 +66,6 @@ namespace escuela
             {
                 Session["Periodo"] = 1;
                 this.drlGrado.SelectedIndex = 0;
-                this.lbActu.Text = this.drlGrado.SelectedValue.ToString();
-                //profesores2 = this.profesoresImpt.listaIdxGrado(Convert.ToInt32(this.drlGrado.SelectedValue.ToString().Trim()));
             }
         }
 
@@ -74,13 +75,183 @@ namespace escuela
             Server.Transfer("Login.aspx");
         }
 
+        protected void btnExcelPfMactual_Click(object sender, EventArgs e)
+        {
+            Session["Periodo2"] = 6;
+            Session["Periodo"] = Convert.ToInt32(this.drlTrimestre.SelectedItem.ToString().Trim());
+            this.btnGeneraExcel_Click(sender,e);
+        }
+        protected void btnExcelPfMT_Click(object sender, EventArgs e)
+        {
+            Session["Periodo2"] = 7;
+            Session["Periodo"] = Convert.ToInt32(this.drlTrimestre.SelectedItem.ToString().Trim());
+            this.btnGeneraExcel_Click(sender, e);
+        }
+        protected void btnExcelPf_Click(object sender, EventArgs e)
+        {
+            Session["Periodo"] = 5;
+            this.btnGeneraExcel_Click(sender, e);
+        }
         protected void btnTF_Click(object sender, EventArgs e)
         {
             Session["Periodo"] = 5;
             this.btnImprimirClick(sender, e);
         }
+        
+        protected void btnTP_Click(object sender, EventArgs e)
+        {
+            Session["Periodo2"] = 6;
+            Session["Periodo"] = Convert.ToInt32(this.drlTrimestre.SelectedItem.ToString().Trim());
+            this.btnImprimirClick(sender, e);
+        }
+        protected void btnTPT_Click(object sender, EventArgs e)
+        {
+            Session["Periodo2"] = 7;
+            Session["Periodo"] = Convert.ToInt32(this.drlTrimestre.SelectedItem.ToString().Trim());
+            this.btnImprimirClick(sender, e);
+        }
+        
+        protected Stream DataTableToExcel()
+        {
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            MemoryStream ms = new MemoryStream();
+            ISheet sheet;
+            int trimes = (int)Session["Periodo"];
+            XSSFRow headerRow;
+            
+            if (trimes==5 && Session["Periodo2"] == null)
+            {
+                sheet = workbook.CreateSheet("NotasFinales");
+                headerRow = headerRow = (XSSFRow)sheet.CreateRow(0);
+                try
+                {
+                    DataTable dt = dtProfesorFinales();
 
+                    //Query
+                    foreach (DataColumn column in dt.Columns)
+                        headerRow.CreateCell(column.Ordinal).SetCellValue(column.ColumnName);
+                    int rowIndex = 1;
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        XSSFRow dataRow = (XSSFRow)sheet.CreateRow(rowIndex);
+                        foreach (DataColumn column in dt.Columns)
+                            dataRow.CreateCell(column.Ordinal).SetCellValue(row[column].ToString());
+                        ++rowIndex;
+                    }
+                    for (int i = 0; i <= dt.Columns.Count; ++i)
+                        sheet.AutoSizeColumn(i);
+                    workbook.Write(ms);
+                    ms.Flush();
+                }
+                catch (Exception)
+                {
 
+                    throw;
+                }
+            }
+            else if ((int)Session["Periodo2"] == 6)
+            {
+                sheet = workbook.CreateSheet("Notas_finales");
+                headerRow = (XSSFRow)sheet.CreateRow(0);
+                try
+                {
+                    List<Estudiante> alEstudiante = new EstudianteImp().ListarGrado(Convert.ToInt32(this.drlGrado.SelectedValue.ToString().Trim()));
+                    foreach (Estudiante estudiante in alEstudiante)
+                    {
+                        DataTable dt = dtTPeriodo(estudiante);
+
+                        //Query
+                        foreach (DataColumn column in dt.Columns)
+                            headerRow.CreateCell(column.Ordinal).SetCellValue(column.ColumnName);
+                        int rowIndex = 1;
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            XSSFRow dataRow = (XSSFRow)sheet.CreateRow(rowIndex);
+                            foreach (DataColumn column in dt.Columns)
+                                dataRow.CreateCell(column.Ordinal).SetCellValue(row[column].ToString());
+                            ++rowIndex;
+                        }
+                        for (int i = 0; i <= dt.Columns.Count; ++i)
+                            sheet.AutoSizeColumn(i);
+                        workbook.Write(ms);
+                        ms.Flush();
+                    }
+                    Session.Remove("Periodo2");
+                }
+                catch (Exception ex)
+                {
+
+                    return null;
+                }
+                finally
+                {
+                    ms.Close();
+                    sheet = null;
+                    headerRow = null;
+                    workbook = null;
+                }
+            }
+            else
+            {
+                sheet = workbook.CreateSheet("Periodo_" + trimes);
+                headerRow = (XSSFRow)sheet.CreateRow(0);
+                try
+                {
+                    List<Estudiante> alEstudiante = new EstudianteImp().ListarGrado(Convert.ToInt32(this.drlGrado.SelectedValue.ToString().Trim()));
+                    foreach (Estudiante estudiante in alEstudiante)
+                    {
+                        DataTable dt = dtTPeriodo(estudiante);
+
+                        //Query
+                        foreach (DataColumn column in dt.Columns)
+                            headerRow.CreateCell(column.Ordinal).SetCellValue(column.ColumnName);
+                        int rowIndex = 1;
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            XSSFRow dataRow = (XSSFRow)sheet.CreateRow(rowIndex);
+                            foreach (DataColumn column in dt.Columns)
+                                dataRow.CreateCell(column.Ordinal).SetCellValue(row[column].ToString());
+                            ++rowIndex;
+                        }
+                        for (int i = 0; i <= dt.Columns.Count; ++i)
+                            sheet.AutoSizeColumn(i);
+                        workbook.Write(ms);
+                        ms.Flush();
+                    }
+                    Session.Remove("Periodo2");
+                }
+                catch (Exception ex)
+                {
+
+                    return null;
+                }
+                finally
+                {
+                    ms.Close();
+                    sheet = null;
+                    headerRow = null;
+                    workbook = null;
+                }
+            }
+            
+            return ms;
+        }
+
+        protected void btnGeneraExcel_Click(object sender, EventArgs e)
+        {
+            Stream s = DataTableToExcel();
+            if (s != null)
+            {
+                MemoryStream ms = s as MemoryStream;
+                Response.AddHeader("Content-Disposition", string.Format("attachment;filename=" + HttpUtility.UrlEncode("DumpNotas") + ".xlsx"));
+                Response.ContentType = "application/vnd.ms-excel";
+                Response.AddHeader("Content-Length", ms.ToArray().Length.ToString());
+                Response.BinaryWrite(ms.ToArray());
+                Response.Flush();
+                ms.Close();
+                ms.Dispose();
+            }
+        }
         public DataTable dtProfesor()
         {
             DataTable dt = new DataTable();
@@ -96,6 +267,23 @@ namespace escuela
             da.Dispose();
             return dt;
         }
+        public DataTable dtTPeriodo(Estudiante estudiante)
+        {
+            DataTable dt = new DataTable();
+            int trimes = (int)Session["Periodo2"];
+            SqlDataAdapter da = new SqlDataAdapter();
+            if (trimes == 6)
+            {
+                da = new SqlDataAdapter(this.evaluacionesImpt.cargarTabla(this.evaluaciones, estudiante, 5));
+            }
+            else { 
+                da = new SqlDataAdapter(this.evaluacionesImpt.cargarTabla(this.evaluaciones, estudiante, (int)Session["Periodo"]));
+            }
+            da.Fill(dt);
+            da.Dispose();
+            return dt;
+        }
+
         public DataTable dtProfesorFinales()
         {
             this.profesores2 = (Profesores)Session["Cuenta2"];
@@ -127,13 +315,157 @@ namespace escuela
             int trimes = (int)Session["Periodo"];
             string grado = "";
             string seccion = "";
-            if (trimes <= 4)
+            if (trimes <= 4 && Session["Periodo2"] == null)
             {
                 dt = dtProfesor();
             }
-            else
+            else if (trimes == 5 && Session["Periodo2"] == null)
             {
                 dt = dtProfesorFinales();
+            } else if (Session["Periodo2"] != null) {
+                List<Estudiante> alEstudiante = new EstudianteImp().ListarGrado(Convert.ToInt32(this.drlGrado.SelectedValue.ToString().Trim()));
+
+                //Abrimos conexion para saber el grado
+                SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
+                con.Open();
+                SqlCommand cmd = con.CreateCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT nombre from Grado where idGrado = @idGrado";
+                cmd.Parameters.AddWithValue("@idGrado", alEstudiante[0].Grado);
+                cmd.ExecuteNonQuery();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                {
+                    grado = dr[0].ToString();
+                }
+                dr.Close();
+                con.Close();
+
+                //Diferenciamos el tipo de documento
+                if ((int)Session["Periodo2"] == 6)
+                {
+                    writer.PageEvent = new HeaderFooterPDF("Administrador", "Notas finales "+ grado.ToUpper(), "" + DateTime.Now.Year);
+                }
+                else
+                {
+                    writer.PageEvent = new HeaderFooterPDF("Administrador", "Periodo " + trimes +" "+ grado.ToUpper(), "" + DateTime.Now.Year);
+                }
+                document.Open();
+
+                //Letra personalizada
+                string nameFont = HttpContext.Current.Server.MapPath("assets/fonts/ArialCE.ttf");
+
+                BaseFont baseFont = BaseFont.CreateFont(nameFont, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                Font fontText = new Font(baseFont, 10, 0, BaseColor.BLACK);
+                Font fontTextBold = new Font(baseFont, 10, 1, BaseColor.BLACK);
+                Font fontTextUnderline = new Font(baseFont, 10, 4, BaseColor.BLACK);
+
+                //Table detalles
+                PdfPTable tbDetalles = new PdfPTable(6);
+                tbDetalles.WidthPercentage = 100f;
+                tbDetalles.TotalWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin;
+                tbDetalles.DefaultCell.Border = 0;
+
+                //Titulo Administrador
+                PdfPCell _cell = new PdfPCell(new Paragraph("Administrador: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Detalle titulo Administrador
+                _cell = new PdfPCell(new Paragraph(this.profesores.Nombre + " " + this.profesores.Apellido, fontText));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Titulo Email
+                _cell = new PdfPCell(new Paragraph("Email: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Detalle titulo Email
+                _cell = new PdfPCell(new Paragraph(this.profesores.Email, fontText));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                document.Add(tbDetalles);
+
+                document.Add(new Chunk("\n"));
+                document.Add(new Chunk("\n"));
+                document.Add(new Chunk("\n"));
+
+                
+                //Recorremos la lista
+                foreach (Estudiante estudiante in alEstudiante)
+                {
+                    this.evaluaciones.IdAlumno = estudiante.IdAlumno;
+                    dt = dtTPeriodo(estudiante);
+                    //Linea
+                    Chunk linea = new Chunk(new LineSeparator(1f, 100f, BaseColor.BLACK, Element.ALIGN_CENTER, -1));
+                    document.Add(new Paragraph(linea));
+                    document.Add(new Chunk("\n"));
+                    document.Add(new Chunk("Alumno: " + estudiante.Nombre + " " + estudiante.Apellido, fontTextUnderline));
+                    PdfPTable table = new PdfPTable(dt.Columns.Count);
+
+                    table.WidthPercentage = 100f;
+
+                    _cell = new PdfPCell();
+
+                    foreach (DataColumn c in dt.Columns)
+                    {
+                        _cell = new PdfPCell(new Paragraph(new Chunk(c.ColumnName, fontText)));
+                        _cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        table.AddCell(_cell);
+                    }
+
+                    foreach (DataRow r in dt.Rows)
+                    {
+                        if (dt.Rows.Count > 0)
+                        {
+                            for (int h = 0; h < dt.Columns.Count; h++)
+                            {
+                                _cell = new PdfPCell(new Paragraph(new Chunk(r[h].ToString(), fontText)));
+                                _cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                table.AddCell(_cell);
+                            }
+                        }
+                    }
+                    document.Add(table);
+                }
+                document.Close();
+                Session.Remove("Periodo2");
+                Response.ContentType = "application/pdf";
+                Response.AddHeader("content-disposition", "attachment;filename=CalificacionesAlumnosPeriodoAdministrador.pdf");
+                HttpContext.Current.Response.Write(document);
+                Response.Flush();
+                Response.End();
             }
             if (dt.Rows.Count > 0)
             {
@@ -266,5 +598,6 @@ namespace escuela
         {
             Session["Periodo"] = Convert.ToInt32(this.drlTrimestre.SelectedValue.ToString().Trim());
         }
+
     }
 }

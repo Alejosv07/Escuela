@@ -8,6 +8,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" />
+        <%--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">--%>
+
     <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css" />
     <link rel="stylesheet" href="assets/css/dash.css" />
     <title>Inicio</title>
@@ -111,7 +113,7 @@
                                     </div>
                                     <div class="col my-4">
                                         <div class="bg-success rounded py-1" style="width: 45%">
-                                            <asp:Label Text="Trimestre: " runat="server" CssClass="text-white px-2"/>
+                                            <asp:Label Text="Periodo: " runat="server" CssClass="text-white px-2" ID="lbPeriodos"/>
                                             <asp:DropDownList ID="drlTrimestre" runat="server" CssClass="btn btn-success dropdown-toggle" 
                                                  DataSourceID="SqlDataSource3" DataTextField="Trimestre" 
                                                  DataValueField="Trimestre" AutoPostBack="True" OnSelectedIndexChanged="DropDownList2_SelectedIndexChanged">
@@ -136,7 +138,7 @@
                                         <asp:BoundField DataField="idEvaluaciones" HeaderText="idEvaluaciones" InsertVisible="False" ReadOnly="True" SortExpression="idEvaluaciones" />
                                         <asp:BoundField DataField="Apellido" HeaderText="Apellido" SortExpression="Apellido" ReadOnly="True"/>
                                         <asp:BoundField DataField="Nombre" HeaderText="Nombre" SortExpression="Nombre" ReadOnly="True"/>
-                                        <asp:TemplateField HeaderText="Evaluacion1" SortExpression="Evaluacion1">
+                                        <asp:TemplateField HeaderText="Evaluacion1(35%)" SortExpression="Evaluacion1">
                                             <EditItemTemplate>
                                                 <asp:TextBox ID="txtEva1" runat="server" Text='<%# Bind("Evaluacion1") %>'></asp:TextBox>
                                                 <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="Evaluación 1: Campo requerido"
@@ -148,10 +150,10 @@
                                                 <asp:Label ID="Label1" runat="server" Text='<%# Bind("Evaluacion1") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Evaluacion2" SortExpression="Evaluacion2">
+                                        <asp:TemplateField HeaderText="Evaluacion2(35%)" SortExpression="Evaluacion2">
                                             <EditItemTemplate>
                                                 <asp:TextBox ID="txtEva2" runat="server" Text='<%# Bind("Evaluacion2") %>'></asp:TextBox>
-                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Evaluación 2: Campo requerido"
+                                                 <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Evaluación 2: Campo requerido"
                                                     ControlToValidate="txtEva2" Text="*" ForeColor="Red"></asp:RequiredFieldValidator>
                                                 <asp:RangeValidator ID="RangeValidator2" runat="server" ErrorMessage="Evaluación 2: Rango de números permitido de 0-10" Text="*"
                                                     ControlToValidate="txtEva2" MinimumValue="0" MaximumValue="10" ForeColor="Red" Type="Double"></asp:RangeValidator>
@@ -160,7 +162,7 @@
                                                 <asp:Label ID="Label2" runat="server" Text='<%# Bind("Evaluacion2") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Evaluacion3" SortExpression="Evaluacion3">
+                                        <asp:TemplateField HeaderText="Evaluacion3(30%)" SortExpression="Evaluacion3">
                                             <EditItemTemplate>
                                                 <asp:TextBox ID="txtEva3" runat="server" Text='<%# Bind("Evaluacion3") %>'></asp:TextBox>
                                                 <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ErrorMessage="Evaluación 3: Campo requerido"
@@ -172,6 +174,8 @@
                                                 <asp:Label ID="Label3" runat="server" Text='<%# Bind("Evaluacion3") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
+                                        <asp:BoundField DataField="PromedioPeriodo" HeaderText="Promedio periodo" ReadOnly="True" SortExpression="PromedioPeriodo" />
+                                        <asp:BoundField DataField="Estado" HeaderText="Estado" ReadOnly="True" SortExpression="Estado" />
                                     </Columns>
                                     <EditRowStyle BackColor="#2461BF" />
                                     <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
@@ -185,7 +189,7 @@
                                     <SortedDescendingHeaderStyle BackColor="#4870BE" />
                                 </asp:GridView>
 
-                                <asp:SqlDataSource ID="SqlDataSource11" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT Evaluaciones.idEvaluaciones,Alumnos.apellido as Apellido,Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluacion1', Evaluaciones.evaluacion2 as 'Evaluacion2', Evaluaciones.evaluacion3 as 'Evaluacion3' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno INNER JOIN Profesores ON Profesores.idProfesores = Evaluaciones.idProfesores INNER JOIN Grado ON Grado.idGrado = Profesores.idGrado WHERE (Evaluaciones.idMateria = @idMateria and Grado.idGrado = @idGrado and Evaluaciones.idTrimestre = @idTrimestre)" UpdateCommand="UPDATE Evaluaciones SET evaluacion1 = @evaluacion1, evaluacion2 = @evaluacion2, evaluacion3 = @evaluacion3 WHERE (idEvaluaciones = @idEvaluaciones)">
+                                <asp:SqlDataSource ID="SqlDataSource11" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT Evaluaciones.idEvaluaciones,Alumnos.apellido as Apellido,Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluacion1', Evaluaciones.evaluacion2 as 'Evaluacion2', Evaluaciones.evaluacion3 as 'Evaluacion3',((Evaluaciones.evaluacion1*0.35)+(Evaluaciones.evaluacion2*0.35)+(Evaluaciones.evaluacion3*0.30)) as 'PromedioPeriodo', CASE WHEN ((Evaluaciones.evaluacion1*0.35)+(Evaluaciones.evaluacion2*0.35)+(Evaluaciones.evaluacion3*0.30)) &gt;=5 THEN 'Aprobado' ELSE 'Reprobado' END AS 'Estado' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno INNER JOIN Profesores ON Profesores.idProfesores = Evaluaciones.idProfesores INNER JOIN Grado ON Grado.idGrado = Profesores.idGrado WHERE (Evaluaciones.idMateria = @idMateria and Grado.idGrado = @idGrado and Evaluaciones.idTrimestre = @idTrimestre)" UpdateCommand="UPDATE Evaluaciones SET evaluacion1 = @evaluacion1, evaluacion2 = @evaluacion2, evaluacion3 = @evaluacion3 WHERE (idEvaluaciones = @idEvaluaciones)">
                                     <SelectParameters>
                                         <asp:ControlParameter ControlID="drlMateria" Name="idMateria" PropertyName="SelectedValue" />
                                         <asp:ControlParameter ControlID="drlGrado" Name="idGrado" PropertyName="SelectedValue" />
@@ -222,8 +226,46 @@
                                 <button class="btn btn-primary" runat="server" onserverclick="btnImprimirClick"><i class="fas fa-print"></i> Imprimir</button>
                             </div>
                             <div class="col">
-                                <button class="btn btn-primary" runat="server" onserverclick="btnTF_Click"><i class="fas fa-print"></i> Imprimir promedios finales</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Más opciones de impresión y exportación</button>
                             </div>
+                        </div>
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="#exampleModal" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Opciones de impresión y exportación</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                  <blockquote>
+                                      <h6><u>Opciones</u></h6>
+                                  </blockquote>
+                                 <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Promedio final materia actual" aria-label="Promedio final materia actual" aria-describedby="basic-addon2" disabled/>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="button"  runat="server" onserverclick="btnTF_Click"><i class="fas fa-print"></i> Imprimir</button>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Promedio finales todas las materias" aria-label="Promedio finales todas las materias" aria-describedby="basic-addon2" disabled/>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="button" runat="server" onserverclick="btnTP_Click"><i class="fas fa-print"></i> Imprimir</button>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Promedio periodo todas las materias" aria-label="Promedio periodo todas las materias" aria-describedby="basic-addon2" disabled/>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="button" runat="server" onserverclick="btnTPT_Click"><i class="fas fa-print"></i> Imprimir</button>
+                                    </div>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                     </div>
                 </section>
@@ -235,7 +277,7 @@
 
     </form>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>

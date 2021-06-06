@@ -13,5 +13,6 @@ namespace escuela.Clases
         Estudiante listaLogin(string email,string contrasena);
         Estudiante listaLogin(string email);
 
+        List<Estudiante> ListarGrado(int idGrado);
     }
 }

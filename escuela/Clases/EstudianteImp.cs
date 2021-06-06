@@ -191,6 +191,38 @@ namespace escuela.Clases
             return alEstudiante;
         }
 
+        public List<Estudiante> ListarGrado(int idGrado)
+        {
+            List<Estudiante> alEstudiante = new List<Estudiante>();
+            SqlConnection con = this.conexion();
+            SqlCommand cmd = con.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "select * from Alumnos where idGrado = @idGrado";
+            cmd.Parameters.AddWithValue("idGrado", idGrado);
+            cmd.ExecuteNonQuery();
+
+            SqlDataReader dr = cmd.ExecuteReader();
+            while (dr.Read())
+            {
+                Estudiante estudiante = new Estudiante();
+                estudiante.IdAlumno = Convert.ToInt32(dr[0].ToString());
+                estudiante.Nombre = dr[1].ToString();
+                estudiante.Apellido = dr[2].ToString();
+                estudiante.Carnet = dr[3].ToString();
+                estudiante.Grado = Convert.ToInt32(dr[4].ToString());
+                estudiante.ResponsableNombre = dr[5].ToString();
+                estudiante.ResponsableApellido = dr[6].ToString();
+                estudiante.Email = dr[7].ToString();
+                estudiante.Usuario = dr[8].ToString();
+                estudiante.Contra = dr[9].ToString();
+
+                alEstudiante.Add(estudiante);
+            }
+            dr.Close();
+            con.Close();
+            return alEstudiante;
+        }
+
         public void Modificar(Estudiante t)
         {
             SqlConnection con = this.conexion();

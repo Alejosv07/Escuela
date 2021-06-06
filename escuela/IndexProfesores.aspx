@@ -128,8 +128,8 @@
                                     <AlternatingRowStyle BackColor="White" />
                                     <Columns>
                                         <asp:BoundField DataField="idEvaluaciones" HeaderText="idEvaluaciones" InsertVisible="False" ReadOnly="True" SortExpression="idEvaluaciones" />
-                                        <asp:BoundField DataField="Apellido" HeaderText="Apellido" SortExpression="Apellido" ReadOnly="true"/>
-                                        <asp:BoundField DataField="Nombre" HeaderText="Nombre" SortExpression="Nombre" ReadOnly="true"/>
+                                        <asp:BoundField DataField="Apellido" HeaderText="Apellido" SortExpression="Apellido" ReadOnly="True"/>
+                                        <asp:BoundField DataField="Nombre" HeaderText="Nombre" SortExpression="Nombre" ReadOnly="True"/>
                                         <asp:TemplateField HeaderText="Evaluacion1" SortExpression="Evaluacion1">
                                             <EditItemTemplate>
                                                 <asp:TextBox ID="txtEva1" runat="server" Text='<%# Bind("Evaluacion1") %>'></asp:TextBox>
@@ -166,6 +166,8 @@
                                                 <asp:Label ID="Label3" runat="server" Text='<%# Bind("Evaluacion3") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
+                                        <asp:BoundField DataField="PromedioPeriodo" HeaderText="Promedio periodo" SortExpression="PromedioPeriodo" ReadOnly="True" />
+                                        <asp:BoundField DataField="Estado" HeaderText="Estado" ReadOnly="True" SortExpression="Estado" />
                                     </Columns>
                                     <EditRowStyle BackColor="#2461BF" />
                                     <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
@@ -178,7 +180,7 @@
                                     <SortedDescendingCellStyle BackColor="#E9EBEF" />
                                     <SortedDescendingHeaderStyle BackColor="#4870BE" />
                                 </asp:GridView>
-                                <asp:SqlDataSource ID="SqlDataSource11" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT Evaluaciones.idEvaluaciones,Alumnos.apellido as Apellido,Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluacion1', Evaluaciones.evaluacion2 as 'Evaluacion2', Evaluaciones.evaluacion3 as 'Evaluacion3' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)" UpdateCommand="UPDATE Evaluaciones SET evaluacion1 = @evaluacion1, evaluacion2 = @evaluacion2, evaluacion3 = @evaluacion3 WHERE (idEvaluaciones = @idEvaluaciones)">
+                                <asp:SqlDataSource ID="SqlDataSource11" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT Evaluaciones.idEvaluaciones,Alumnos.apellido as Apellido,Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluacion1', Evaluaciones.evaluacion2 as 'Evaluacion2', Evaluaciones.evaluacion3 as 'Evaluacion3', ((Evaluaciones.evaluacion1*0.35)+(Evaluaciones.evaluacion2*0.35)+(Evaluaciones.evaluacion3*0.30)) as 'PromedioPeriodo', CASE WHEN ((Evaluaciones.evaluacion1*0.35)+(Evaluaciones.evaluacion2*0.35)+(Evaluaciones.evaluacion3*0.30)) &gt;=5 THEN 'Aprobado' ELSE 'Reprobado' END AS 'Estado' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)" UpdateCommand="UPDATE Evaluaciones SET evaluacion1 = @evaluacion1, evaluacion2 = @evaluacion2, evaluacion3 = @evaluacion3 WHERE (idEvaluaciones = @idEvaluaciones)">
                                     <SelectParameters>
                                         <asp:ControlParameter ControlID="DropDownList1" Name="idMateria" PropertyName="SelectedValue" />
                                         <asp:ControlParameter ControlID="txtProfesorSeleccionado" Name="idProfesores" PropertyName="Text" />
@@ -220,8 +222,47 @@
                                 <button class="btn btn-primary" runat="server" onserverclick="btnImprimirClick"><i class="fas fa-print"></i> Imprimir</button>
                             </div>
                             <div class="col">
-                                <button class="btn btn-primary" runat="server" onserverclick="btnTF_Click"><i class="fas fa-print"></i> Imprimir promedios finales</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Más opciones de impresión y exportación</button>
                             </div>
+                        </div>
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="#exampleModal" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Opciones de impresión y exportación</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                  <asp:CheckBoxList ID="CheckBoxList1" runat="server"></asp:CheckBoxList>
+                                  <blockquote>
+                                      <h6><u>Opciones</u></h6>
+                                  </blockquote>
+                                 <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Promedio final materia actual" aria-label="Promedio final materia actual" aria-describedby="basic-addon2" disabled/>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="button"  runat="server" onserverclick="btnTF_Click"><i class="fas fa-print"></i> Imprimir</button>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Promedio finales todas las materias" aria-label="Promedio finales todas las materias" aria-describedby="basic-addon2" disabled/>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="button" runat="server" onserverclick="btnTP_Click"><i class="fas fa-print"></i> Imprimir</button>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Promedio periodo todas las materias" aria-label="Promedio periodo todas las materias" aria-describedby="basic-addon2" disabled/>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="button" runat="server" onserverclick="btnTPT_Click"><i class="fas fa-print"></i> Imprimir</button>
+                                    </div>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                     </div>
                 </section>

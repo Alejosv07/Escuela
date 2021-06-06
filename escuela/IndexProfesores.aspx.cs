@@ -67,14 +67,27 @@ namespace escuela
             Session["Periodo"] = 5;
             this.btnImprimirClick(sender,e);
         }
-        
+
+        protected void btnTP_Click(object sender, EventArgs e)
+        {
+            Session["Periodo2"] = 6;
+            Session["Periodo"] = Convert.ToInt32(this.DropDownList2.SelectedItem.ToString().Trim());
+            this.btnImprimirClick(sender, e);
+        }
+        protected void btnTPT_Click(object sender, EventArgs e)
+        {
+            Session["Periodo2"] = 7;
+            Session["Periodo"] = Convert.ToInt32(this.DropDownList2.SelectedItem.ToString().Trim());
+            this.btnImprimirClick(sender, e);
+        }
+
         public DataTable dtProfesor()
         {
             DataTable dt = new DataTable();
             SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
             SqlCommand cmd = con.CreateCommand();
             cmd.CommandType = CommandType.Text;
-            cmd.CommandText = "SELECT Alumnos.apellido as 'Apellido', Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluación1(35%)', Evaluaciones.evaluacion2 as 'Evaluación2(35%)', Evaluaciones.evaluacion3 as 'Evaluación3(30%)',((Evaluaciones.evaluacion1*0.35)+(Evaluaciones.evaluacion2*0.35)+(Evaluaciones.evaluacion3*0.30)) as 'PromedioPeriodo' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)";
+            cmd.CommandText = "SELECT Alumnos.apellido as 'Apellido', Alumnos.nombre as 'Nombre', Evaluaciones.evaluacion1 as 'Evaluación1(35%)', Evaluaciones.evaluacion2 as 'Evaluación2(35%)', Evaluaciones.evaluacion3 as 'Evaluación3(30%)',((Evaluaciones.evaluacion1*0.35)+(Evaluaciones.evaluacion2*0.35)+(Evaluaciones.evaluacion3*0.30)) as 'PromedioPeriodo', CASE WHEN ((Evaluaciones.evaluacion1*0.35)+(Evaluaciones.evaluacion2*0.35)+(Evaluaciones.evaluacion3*0.30)) >=5 THEN 'Aprobado' ELSE 'Reprobado' END AS 'Estado' FROM Evaluaciones INNER JOIN Alumnos ON Evaluaciones.idAlumno = Alumnos.idAlumno WHERE (Evaluaciones.idMateria = @idMateria and Evaluaciones.idProfesores = @idProfesores and Evaluaciones.idTrimestre = @idTrimestre)";
             cmd.Parameters.AddWithValue("@idMateria", this.DropDownList1.SelectedValue.ToString().Trim());
             cmd.Parameters.AddWithValue("@idProfesores", this.txtProfesorSeleccionado.Text);
             cmd.Parameters.AddWithValue("@idTrimestre", this.DropDownList2.SelectedValue.ToString().Trim());
@@ -83,6 +96,25 @@ namespace escuela
             da.Dispose();
             return dt;
         }
+
+        public DataTable dtTPeriodo(Estudiante estudiante)
+        {
+            DataTable dt = new DataTable();
+            int trimes = (int)Session["Periodo2"];
+            SqlDataAdapter da = new SqlDataAdapter();
+            if (trimes == 6)
+            {
+                da = new SqlDataAdapter(this.evaluacionesImpt.cargarTabla(this.evaluaciones, estudiante, 5));
+            }
+            else
+            {
+                da = new SqlDataAdapter(this.evaluacionesImpt.cargarTabla(this.evaluaciones, estudiante, (int)Session["Periodo"]));
+            }
+            da.Fill(dt);
+            da.Dispose();
+            return dt;
+        }
+
         public DataTable dtProfesorFinales()
         {
             DataTable dt = new DataTable();
@@ -112,12 +144,200 @@ namespace escuela
             int trimes = (int)Session["Periodo"];
             string grado = "";
             string seccion = "";
-            if (trimes <= 4)
+            if (trimes <= 4 && Session["Periodo2"] == null)
             {
                 dt = dtProfesor();
             }
-            else { 
+            else if (trimes == 5 && Session["Periodo2"] == null)
+            {
                 dt = dtProfesorFinales();
+            }
+            else if (Session["Periodo2"] != null)
+            {
+                List<Estudiante> alEstudiante = new EstudianteImp().ListarGrado(this.profesores.IdGrado);
+
+                //Abrimos conexion para saber el grado
+                SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
+                con.Open();
+                SqlCommand cmd = con.CreateCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT nombre from Grado where idGrado = @idGrado";
+                cmd.Parameters.AddWithValue("@idGrado", alEstudiante[0].Grado);
+                cmd.ExecuteNonQuery();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                {
+                    grado = dr[0].ToString();
+                }
+                dr.Close();
+                con.Close();
+
+                //Diferenciamos el tipo de documento
+                if ((int)Session["Periodo2"] == 6)
+                {
+                    writer.PageEvent = new HeaderFooterPDF("Docentes", "Notas finales " + grado.ToUpper(), "" + DateTime.Now.Year);
+                }
+                else
+                {
+                    writer.PageEvent = new HeaderFooterPDF("Docentes", "Periodo " + trimes + " " + grado.ToUpper(), "" + DateTime.Now.Year);
+                }
+                document.Open();
+
+                //Letra personalizada
+                string nameFont = HttpContext.Current.Server.MapPath("assets/fonts/ArialCE.ttf");
+
+                BaseFont baseFont = BaseFont.CreateFont(nameFont, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                Font fontText = new Font(baseFont, 10, 0, BaseColor.BLACK);
+                Font fontTextBold = new Font(baseFont, 10, 1, BaseColor.BLACK);
+                Font fontTextUnderline = new Font(baseFont, 10, 4, BaseColor.BLACK);
+
+                //Table detalles
+                PdfPTable tbDetalles = new PdfPTable(6);
+                tbDetalles.WidthPercentage = 100f;
+                tbDetalles.TotalWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin;
+                tbDetalles.DefaultCell.Border = 0;
+
+                //Titulo Docente
+                PdfPCell _cell = new PdfPCell(new Paragraph("Docente: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Detalle titulo Docente
+                _cell = new PdfPCell(new Paragraph(this.profesores.Nombre + " " + this.profesores.Apellido, fontText));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Titulo Impartiendo
+                _cell = new PdfPCell(new Paragraph("Impartiendo: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Detalle titulo Impartiendo
+                _cell = new PdfPCell(new Paragraph(grado, fontText));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Titulo Seccion
+                _cell = new PdfPCell(new Paragraph("Seccion: ", fontTextBold));
+                _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                _cell.Border = 0;
+                tbDetalles.AddCell(_cell);
+
+                //Abrimos conexion para saber la Seccion
+                con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
+                con.Open();
+                cmd = con.CreateCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT seccion from Grado where idGrado = @idGrado";
+                cmd.Parameters.AddWithValue("@idGrado", this.profesores.IdGrado);
+                cmd.ExecuteNonQuery();
+                dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                {
+                    seccion = dr[0].ToString();
+                    //Detalle titulo Seccion
+                    _cell = new PdfPCell(new Paragraph(seccion, fontText));
+                    _cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                    _cell.Border = 0;
+                    tbDetalles.AddCell(_cell);
+                }
+                dr.Close();
+                con.Close();
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                //Celda vacia
+                tbDetalles.AddCell(new Paragraph());
+
+                document.Add(tbDetalles);
+
+                document.Add(new Chunk("\n"));
+                document.Add(new Chunk("\n"));
+                document.Add(new Chunk("\n"));
+
+
+                //Recorremos la lista
+                foreach (Estudiante estudiante in alEstudiante)
+                {
+                    this.evaluaciones.IdAlumno = estudiante.IdAlumno;
+                    dt = dtTPeriodo(estudiante);
+                    //Linea
+                    Chunk linea = new Chunk(new LineSeparator(1f, 100f, BaseColor.BLACK, Element.ALIGN_CENTER, -1));
+                    document.Add(new Paragraph(linea));
+                    document.Add(new Chunk("\n"));
+                    document.Add(new Chunk("Alumno: " + estudiante.Nombre + " " + estudiante.Apellido, fontTextUnderline));
+                    PdfPTable table = new PdfPTable(dt.Columns.Count);
+
+                    table.WidthPercentage = 100f;
+
+                    _cell = new PdfPCell();
+
+                    foreach (DataColumn c in dt.Columns)
+                    {
+                        _cell = new PdfPCell(new Paragraph(new Chunk(c.ColumnName, fontText)));
+                        _cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        table.AddCell(_cell);
+                    }
+
+                    foreach (DataRow r in dt.Rows)
+                    {
+                        if (dt.Rows.Count > 0)
+                        {
+                            for (int h = 0; h < dt.Columns.Count; h++)
+                            {
+                                _cell = new PdfPCell(new Paragraph(new Chunk(r[h].ToString(), fontText)));
+                                _cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                table.AddCell(_cell);
+                            }
+                        }
+                    }
+                    document.Add(table);
+                }
+                document.Close();
+                Session.Remove("Periodo2");
+                Response.ContentType = "application/pdf";
+                Response.AddHeader("content-disposition", "attachment;filename=CalificacionesAlumnosPeriodoAdministrador.pdf");
+                HttpContext.Current.Response.Write(document);
+                Response.Flush();
+                Response.End();
+
             }
             if (dt.Rows.Count > 0)
             {

@@ -78,6 +78,15 @@ namespace escuela
         protected global::System.Web.UI.WebControls.SqlDataSource SqlDataSource111;
 
         /// <summary>
+        /// Control lbPeriodos.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lbPeriodos;
+
+        /// <summary>
         /// Control drlTrimestre.
         /// </summary>
         /// <remarks>
