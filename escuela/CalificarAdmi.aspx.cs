@@ -36,6 +36,7 @@ namespace escuela
                 if (Session["Cuenta2"] != null)
                 {
                     profesores2 = (Profesores)Session["Cuenta2"];
+                    
                 }
                 else {
                     SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bd.mdf;Integrated Security=True");
@@ -50,9 +51,18 @@ namespace escuela
                     {
                         idGrado = Convert.ToInt32(dr[0].ToString().Trim());
                         Session["Cuenta2"] = this.profesoresImpt.listaIdxGrado(idGrado);
+                        profesores2 = (Profesores)Session["Cuenta2"];
                     }
                     dr.Close();
                     con.Close();
+                }
+                if (this.profesores2.IdGrado >= 18)
+                {
+                    this.lbPeriodos.Text = "Trimestre";
+                }
+                else
+                {
+                    this.lbPeriodos.Text = "Periodo";
                 }
             }
             this.evaluaciones = new Evaluaciones();
@@ -592,6 +602,7 @@ namespace escuela
         protected void DropDownList1_SelectedIndexChanged(object sender, EventArgs e)
         {
             Session["Cuenta2"] = this.profesoresImpt.listaIdxGrado(Convert.ToInt32(this.drlGrado.SelectedValue.ToString().Trim()));
+            
         }
 
         protected void DropDownList2_SelectedIndexChanged(object sender, EventArgs e)

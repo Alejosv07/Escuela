@@ -105,7 +105,7 @@
                                     </div>
                                     <div class="col my-4">
                                         <div class="bg-success rounded py-1" style="width: 45%">
-                                            <asp:Label Text="Trimestre: " runat="server" CssClass="text-white px-2"/>
+                                            <asp:Label Text="Trimestre: " runat="server" CssClass="text-white px-2" ID="lbPeriodo"/>
                                             <asp:DropDownList ID="DropDownList2" runat="server" CssClass="btn btn-success dropdown-toggle" 
                                                  DataSourceID="SqlDataSource3" DataTextField="Trimestre" 
                                                  DataValueField="Trimestre" AutoPostBack="True" OnSelectedIndexChanged="DropDownList2_SelectedIndexChanged">
@@ -130,7 +130,7 @@
                                         <asp:BoundField DataField="idEvaluaciones" HeaderText="idEvaluaciones" InsertVisible="False" ReadOnly="True" SortExpression="idEvaluaciones" />
                                         <asp:BoundField DataField="Apellido" HeaderText="Apellido" SortExpression="Apellido" ReadOnly="True"/>
                                         <asp:BoundField DataField="Nombre" HeaderText="Nombre" SortExpression="Nombre" ReadOnly="True"/>
-                                        <asp:TemplateField HeaderText="Evaluacion1" SortExpression="Evaluacion1">
+                                        <asp:TemplateField HeaderText="Evaluacion1(35%)" SortExpression="Evaluacion1">
                                             <EditItemTemplate>
                                                 <asp:TextBox ID="txtEva1" runat="server" Text='<%# Bind("Evaluacion1") %>'></asp:TextBox>
                                                 <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="Evaluación 1: Campo requerido"
@@ -142,7 +142,7 @@
                                                 <asp:Label ID="Label1" runat="server" Text='<%# Bind("Evaluacion1") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Evaluacion2" SortExpression="Evaluacion2">
+                                        <asp:TemplateField HeaderText="Evaluacion2(35%)" SortExpression="Evaluacion2">
                                             <EditItemTemplate>
                                                 <asp:TextBox ID="txtEva2" runat="server" Text='<%# Bind("Evaluacion2") %>'></asp:TextBox>
                                                 <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Evaluación 2: Campo requerido"
@@ -154,7 +154,7 @@
                                                 <asp:Label ID="Label2" runat="server" Text='<%# Bind("Evaluacion2") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Evaluacion3" SortExpression="Evaluacion3">
+                                        <asp:TemplateField HeaderText="Evaluacion3(30%)" SortExpression="Evaluacion3">
                                             <EditItemTemplate>
                                                 <asp:TextBox ID="txtEva3" runat="server" Text='<%# Bind("Evaluacion3") %>'></asp:TextBox>
                                                 <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ErrorMessage="Evaluación 3: Campo requerido"

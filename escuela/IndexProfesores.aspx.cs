@@ -49,6 +49,13 @@ namespace escuela
                 dr.Close();
                 con.Close();
                 Session["Periodo"] = 1;
+                if (this.profesores.IdGrado <= 18)
+                {
+                    this.lbPeriodo.Text = "Trimestre";
+                }
+                else {
+                    this.lbPeriodo.Text = "Periodo";
+                }
             }
             this.GridView1.Columns[0].Visible = false;
             this.txtProfesorSeleccionado.Text = this.profesores.IdProfesores.ToString().Trim();
