@@ -1,5 +1,8 @@
 # Escuela
 Sistema de notas para una escuela de 1 a 1 grado
+
+![Imagen de referencia](preview.png)
+
 #### Usuarios ya registrados
 ##### Correo, contrasena, cargo
 * juanpablo@gmail.com p **Administrador**
